@@ -226,6 +226,7 @@
             height: 50px;
             width: auto;
             object-fit: contain;
+            transition: opacity 0.3s ease;
         }
 
         .nav-links {
@@ -987,7 +988,7 @@
     <nav id="navbar">
         <div class="nav-container">
             <a href="#" class="logo" onclick="showPage('home'); return false;">
-                <img src="logo.png" alt="The Sigma Company">
+                <img src="logo.png" alt="The Sigma Company" id="logo-img">
             </a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
                 <i class="fas fa-bars"></i>
@@ -1452,6 +1453,16 @@
     </footer>
 
     <script>
+        // Update logo based on theme
+        function updateLogo(theme) {
+            const logoImg = document.getElementById('logo-img');
+            if (theme === 'light') {
+                logoImg.src = 'logo_black.png';
+            } else {
+                logoImg.src = 'logo.png';
+            }
+        }
+
         // Theme Toggle Functionality
         function toggleTheme() {
             const root = document.documentElement;
@@ -1465,12 +1476,14 @@
                 themeIcon.classList.add('fa-moon');
                 themeSwitch.classList.remove('active');
                 localStorage.setItem('theme', 'light');
+                updateLogo('light');
             } else {
                 root.setAttribute('data-theme', 'dark');
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
                 themeSwitch.classList.add('active');
                 localStorage.setItem('theme', 'dark');
+                updateLogo('dark');
             }
         }
 
@@ -1486,10 +1499,12 @@
                     themeIcon.classList.remove('fa-moon');
                     themeIcon.classList.add('fa-sun');
                     themeSwitch.classList.add('active');
+                    updateLogo('dark');
                 } else {
                     themeIcon.classList.remove('fa-sun');
                     themeIcon.classList.add('fa-moon');
                     themeSwitch.classList.remove('active');
+                    updateLogo('light');
                 }
             } else {
                 // Use system preference
@@ -1497,6 +1512,9 @@
                     themeIcon.classList.remove('fa-moon');
                     themeIcon.classList.add('fa-sun');
                     themeSwitch.classList.add('active');
+                    updateLogo('dark');
+                } else {
+                    updateLogo('light');
                 }
             }
         }
