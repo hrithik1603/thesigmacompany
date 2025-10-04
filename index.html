@@ -93,20 +93,11 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Theme Toggle Switch - Static in top left */
+        /* Theme Toggle Switch - In top bar */
         .theme-toggle-container {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
             display: flex;
             align-items: center;
             gap: 10px;
-            background: var(--surface-dark);
-            padding: 8px 16px;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .theme-toggle-label {
@@ -160,7 +151,7 @@
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
             gap: 24px;
             flex-wrap: wrap;
@@ -845,32 +836,14 @@
 
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {
-            .theme-toggle-container {
-                top: 10px;
-                left: 10px;
-                padding: 6px 12px;
-                gap: 8px;
-            }
-
-            .theme-toggle-label {
-                font-size: 12px;
-            }
-
-            .theme-switch {
-                width: 44px;
-                height: 22px;
-            }
-
-            .theme-switch-slider {
-                width: 18px;
-                height: 18px;
-            }
-
-            .theme-switch.active .theme-switch-slider {
-                transform: translateX(22px);
-            }
-
             .top-bar-container {
+                justify-content: center;
+                gap: 16px;
+            }
+
+            .theme-toggle-container {
+                order: -1;
+                width: 100%;
                 justify-content: center;
             }
 
@@ -985,18 +958,19 @@
     </style>
 </head>
 <body>
-    <!-- Theme Toggle Switch - Top Left -->
-    <div class="theme-toggle-container">
-        <span class="theme-toggle-label">Theme:</span>
-        <div class="theme-switch" id="theme-switch" onclick="toggleTheme()">
-            <div class="theme-switch-slider">
-                <i class="fas fa-moon" id="theme-icon" style="color: #666;"></i>
-            </div>
-        </div>
-    </div>
-
     <div class="top-bar">
         <div class="top-bar-container">
+            <!-- Theme Toggle on the left -->
+            <div class="theme-toggle-container">
+                <span class="theme-toggle-label">Theme:</span>
+                <div class="theme-switch" id="theme-switch" onclick="toggleTheme()">
+                    <div class="theme-switch-slider">
+                        <i class="fas fa-moon" id="theme-icon" style="color: #666;"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact info on the right -->
             <div class="contact-info">
                 <div class="phone-number">
                     <i class="fas fa-phone"></i>
