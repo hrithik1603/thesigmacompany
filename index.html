@@ -13,7 +13,25 @@
             box-sizing: border-box;
         }
 
-        :root {
+        /* Light Theme Variables */
+        :root[data-theme="light"] {
+            --primary-blue: #1a73e8;
+            --secondary-blue: #4285f4;
+            --accent-blue: #0d47a1;
+            --dark-bg: #ffffff;
+            --surface-dark: #f8f9fa;
+            --surface-elevated: #e8eaed;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --text-tertiary: #80868b;
+            --border-color: #dadce0;
+            --gradient-blue: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+            --gradient-surface: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+            --hover-bg: #f1f3f4;
+        }
+
+        /* Dark Theme Variables */
+        :root[data-theme="dark"] {
             --primary-blue: #8ab4f8;
             --secondary-blue: #4285f4;
             --accent-blue: #1a73e8;
@@ -26,6 +44,44 @@
             --border-color: #3c4043;
             --gradient-blue: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
             --gradient-surface: linear-gradient(180deg, #1a1a1e 0%, #0b0b0f 100%);
+            --hover-bg: #25252a;
+        }
+
+        /* System preference default */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-blue: #8ab4f8;
+                --secondary-blue: #4285f4;
+                --accent-blue: #1a73e8;
+                --dark-bg: #0b0b0f;
+                --surface-dark: #1a1a1e;
+                --surface-elevated: #25252a;
+                --text-primary: #e8eaed;
+                --text-secondary: #9aa0a6;
+                --text-tertiary: #5f6368;
+                --border-color: #3c4043;
+                --gradient-blue: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+                --gradient-surface: linear-gradient(180deg, #1a1a1e 0%, #0b0b0f 100%);
+                --hover-bg: #25252a;
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --primary-blue: #1a73e8;
+                --secondary-blue: #4285f4;
+                --accent-blue: #0d47a1;
+                --dark-bg: #ffffff;
+                --surface-dark: #f8f9fa;
+                --surface-elevated: #e8eaed;
+                --text-primary: #202124;
+                --text-secondary: #5f6368;
+                --text-tertiary: #80868b;
+                --border-color: #dadce0;
+                --gradient-blue: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+                --gradient-surface: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+                --hover-bg: #f1f3f4;
+            }
         }
 
         body {
@@ -34,6 +90,63 @@
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Theme Toggle Switch - Static in top left */
+        .theme-toggle-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface-dark);
+            padding: 8px 16px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .theme-toggle-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .theme-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .theme-switch.active {
+            background: var(--primary-blue);
+        }
+
+        .theme-switch-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .theme-switch.active .theme-switch-slider {
+            transform: translateX(26px);
         }
 
         .top-bar {
@@ -45,14 +158,23 @@
         .top-bar-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 40px;
+            padding: 0 20px;
             display: flex;
             justify-content: flex-end;
             align-items: center;
             gap: 24px;
+            flex-wrap: wrap;
         }
 
-        .phone-number {
+        .contact-info {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .phone-number,
+        .email-info {
             color: var(--text-secondary);
             font-size: 14px;
             display: flex;
@@ -60,40 +182,28 @@
             gap: 8px;
         }
 
-        .phone-number i {
+        .phone-number i,
+        .email-info i {
             color: var(--primary-blue);
+            font-size: 14px;
         }
 
-        .social-links {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .social-links a {
+        .phone-number a,
+        .email-info a {
             color: var(--text-secondary);
-            font-size: 18px;
-            transition: all 0.3s ease;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: var(--surface-elevated);
+            text-decoration: none;
         }
 
-        .social-links a:hover {
+        .phone-number a:hover,
+        .email-info a:hover {
             color: var(--primary-blue);
-            background: var(--border-color);
-            transform: translateY(-2px);
         }
 
         nav {
             position: sticky;
             top: 0;
             width: 100%;
-            background: rgba(11, 11, 15, 0.95);
+            background: var(--dark-bg);
             backdrop-filter: blur(20px);
             padding: 20px 0;
             border-bottom: 1px solid var(--border-color);
@@ -103,8 +213,7 @@
 
         nav.scrolled {
             padding: 15px 0;
-            background: rgba(11, 11, 15, 0.98);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
         }
 
         .nav-container {
@@ -113,7 +222,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 40px;
+            padding: 0 20px;
         }
 
         .logo {
@@ -123,14 +232,14 @@
         }
 
         .logo img {
-            height: 60px;
+            height: 50px;
             width: auto;
             object-fit: contain;
         }
 
         .nav-links {
             display: flex;
-            gap: 32px;
+            gap: 24px;
             list-style: none;
         }
 
@@ -141,6 +250,7 @@
             font-size: 15px;
             transition: color 0.3s ease;
             position: relative;
+            white-space: nowrap;
         }
 
         .nav-links a:hover,
@@ -158,10 +268,19 @@
             background: var(--gradient-blue);
         }
 
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
         .cta-button {
             background: var(--gradient-blue);
             color: white;
-            padding: 12px 28px;
+            padding: 12px 24px;
             border-radius: 24px;
             text-decoration: none;
             font-weight: 600;
@@ -170,6 +289,7 @@
             border: none;
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+            white-space: nowrap;
         }
 
         .cta-button:hover {
@@ -178,7 +298,7 @@
         }
 
         .hero {
-            padding: 100px 40px 80px;
+            padding: 80px 20px 60px;
             background: var(--gradient-surface);
             text-align: center;
             position: relative;
@@ -198,7 +318,7 @@
         }
 
         .hero h1 {
-            font-size: 56px;
+            font-size: clamp(32px, 6vw, 56px);
             font-weight: 700;
             margin-bottom: 24px;
             color: var(--text-primary);
@@ -216,7 +336,7 @@
         }
 
         .hero p {
-            font-size: 20px;
+            font-size: clamp(16px, 3vw, 20px);
             color: var(--text-secondary);
             max-width: 700px;
             margin: 0 auto 40px;
@@ -227,17 +347,18 @@
 
         .hero-buttons {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             justify-content: center;
             animation: fadeInUp 0.8s ease 0.4s both;
             position: relative;
             z-index: 1;
+            flex-wrap: wrap;
         }
 
         .secondary-button {
             background: transparent;
             color: var(--primary-blue);
-            padding: 12px 28px;
+            padding: 12px 24px;
             border-radius: 24px;
             text-decoration: none;
             font-weight: 600;
@@ -253,18 +374,18 @@
 
         .stats {
             max-width: 1200px;
-            margin: -40px auto 80px;
-            padding: 0 40px;
+            margin: -40px auto 60px;
+            padding: 0 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
             position: relative;
             z-index: 10;
         }
 
         .stat-card {
             background: var(--surface-dark);
-            padding: 32px;
+            padding: 24px;
             border-radius: 16px;
             text-align: center;
             border: 1px solid var(--border-color);
@@ -274,30 +395,30 @@
         .stat-card:hover {
             transform: translateY(-8px);
             border-color: var(--primary-blue);
-            box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.1);
         }
 
         .stat-number {
-            font-size: 48px;
+            font-size: clamp(32px, 5vw, 48px);
             font-weight: 700;
             color: var(--primary-blue);
             margin-bottom: 8px;
         }
 
         .stat-label {
-            font-size: 16px;
+            font-size: 14px;
             color: var(--text-secondary);
         }
 
         .section {
             max-width: 1200px;
-            margin: 80px auto;
-            padding: 0 40px;
+            margin: 60px auto;
+            padding: 0 20px;
         }
 
         .section-title {
             text-align: center;
-            font-size: 48px;
+            font-size: clamp(32px, 5vw, 48px);
             font-weight: 700;
             margin-bottom: 16px;
             color: var(--text-primary);
@@ -306,9 +427,9 @@
 
         .section-subtitle {
             text-align: center;
-            font-size: 18px;
+            font-size: clamp(16px, 2.5vw, 18px);
             color: var(--text-secondary);
-            margin-bottom: 60px;
+            margin-bottom: 48px;
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
@@ -316,14 +437,14 @@
 
         .domains-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-top: 48px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
         }
 
         .domain-card {
             background: var(--surface-dark);
-            padding: 32px;
+            padding: 28px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
@@ -333,30 +454,31 @@
         .domain-card:hover {
             transform: translateY(-8px);
             border-color: var(--primary-blue);
-            box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.1);
         }
 
         .domain-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
+            font-size: 40px;
+            margin-bottom: 16px;
         }
 
         .domain-card h3 {
-            font-size: 22px;
+            font-size: 20px;
             margin-bottom: 12px;
             color: var(--text-primary);
         }
 
         .domain-card p {
             color: var(--text-secondary);
-            font-size: 15px;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 24px;
-            margin-top: 48px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
         }
 
         .news-card {
@@ -372,7 +494,7 @@
         .news-card:hover {
             transform: translateY(-8px);
             border-color: var(--primary-blue);
-            box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.1);
         }
 
         .news-thumbnail {
@@ -383,14 +505,14 @@
         }
 
         .news-content {
-            padding: 24px;
+            padding: 20px;
             flex: 1;
             display: flex;
             flex-direction: column;
         }
 
         .news-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 12px;
@@ -399,7 +521,7 @@
 
         .news-description {
             color: var(--text-secondary);
-            font-size: 15px;
+            font-size: 14px;
             margin-bottom: 16px;
             flex: 1;
             line-height: 1.6;
@@ -409,7 +531,7 @@
             background: var(--surface-elevated);
             padding: 12px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-secondary);
             margin-bottom: 16px;
             font-style: italic;
@@ -421,16 +543,18 @@
             align-items: center;
             padding-top: 16px;
             border-top: 1px solid var(--border-color);
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .news-source {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--primary-blue);
             font-weight: 500;
         }
 
         .news-details {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-tertiary);
         }
 
@@ -452,11 +576,11 @@
         .cta-section {
             background: var(--gradient-blue);
             color: white;
-            padding: 80px 40px;
+            padding: 60px 20px;
             text-align: center;
             position: relative;
             overflow: hidden;
-            margin: 80px 0;
+            margin: 60px 0;
         }
 
         .cta-section::before {
@@ -471,7 +595,7 @@
         }
 
         .cta-section h2 {
-            font-size: 42px;
+            font-size: clamp(28px, 5vw, 42px);
             margin-bottom: 20px;
             font-weight: 700;
             position: relative;
@@ -479,7 +603,7 @@
         }
 
         .cta-section p {
-            font-size: 18px;
+            font-size: clamp(16px, 2.5vw, 18px);
             margin-bottom: 32px;
             opacity: 0.95;
             position: relative;
@@ -489,11 +613,11 @@
         .cta-white-button {
             background: white;
             color: var(--accent-blue);
-            padding: 16px 40px;
+            padding: 16px 32px;
             border-radius: 28px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 14px;
             display: inline-block;
             transition: all 0.3s ease;
             position: relative;
@@ -506,9 +630,9 @@
         }
 
         footer {
-            background: var(--dark-bg);
+            background: var(--surface-dark);
             color: var(--text-secondary);
-            padding: 60px 40px 30px;
+            padding: 60px 20px 30px;
             border-top: 1px solid var(--border-color);
         }
 
@@ -516,8 +640,8 @@
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 48px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
             margin-bottom: 40px;
         }
 
@@ -545,6 +669,32 @@
 
         .footer-section a:hover {
             color: var(--primary-blue);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            font-size: 18px;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--surface-elevated);
+        }
+
+        .social-links a:hover {
+            color: var(--primary-blue);
+            background: var(--hover-bg);
+            transform: translateY(-2px);
         }
 
         .footer-bottom {
@@ -578,7 +728,7 @@
 
         .page-content {
             min-height: 60vh;
-            padding: 100px 40px 80px;
+            padding: 80px 20px 60px;
         }
 
         .page-content-inner {
@@ -588,14 +738,14 @@
 
         .contact-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 48px;
-            margin-top: 60px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-top: 48px;
         }
 
         .contact-info-card {
             background: var(--surface-dark);
-            padding: 32px;
+            padding: 28px;
             border-radius: 16px;
             border: 1px solid var(--border-color);
             text-align: center;
@@ -608,20 +758,20 @@
         }
 
         .contact-icon {
-            font-size: 48px;
+            font-size: 40px;
             color: var(--primary-blue);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .contact-form {
             background: var(--surface-dark);
-            padding: 40px;
+            padding: 32px;
             border-radius: 16px;
             border: 1px solid var(--border-color);
         }
 
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
@@ -629,17 +779,18 @@
             margin-bottom: 8px;
             color: var(--text-primary);
             font-weight: 500;
+            font-size: 14px;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: var(--surface-elevated);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             color: var(--text-primary);
-            font-size: 15px;
+            font-size: 14px;
             font-family: inherit;
             transition: border-color 0.3s ease;
         }
@@ -652,50 +803,7 @@
 
         .form-group textarea {
             resize: vertical;
-            min-height: 120px;
-        }
-
-        @media (max-width: 768px) {
-            .top-bar-container {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .hero h1 {
-                font-size: 36px;
-            }
-
-            .hero p {
-                font-size: 18px;
-            }
-
-            .section-title {
-                font-size: 32px;
-            }
-
-            .stats {
-                grid-template-columns: 1fr;
-            }
-
-            .domains-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-            }
-
-            .logo img {
-                height: 45px;
-            }
+            min-height: 100px;
         }
 
         .fade-in {
@@ -711,11 +819,11 @@
 
         ::selection {
             background: var(--primary-blue);
-            color: var(--dark-bg);
+            color: white;
         }
 
         ::-webkit-scrollbar {
-            width: 12px;
+            width: 10px;
         }
 
         ::-webkit-scrollbar-track {
@@ -734,28 +842,170 @@
         .hidden {
             display: none;
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .theme-toggle-container {
+                top: 10px;
+                left: 10px;
+                padding: 6px 12px;
+                gap: 8px;
+            }
+
+            .theme-toggle-label {
+                font-size: 12px;
+            }
+
+            .theme-switch {
+                width: 44px;
+                height: 22px;
+            }
+
+            .theme-switch-slider {
+                width: 18px;
+                height: 18px;
+            }
+
+            .theme-switch.active .theme-switch-slider {
+                transform: translateX(22px);
+            }
+
+            .top-bar-container {
+                justify-content: center;
+            }
+
+            .contact-info {
+                justify-content: center;
+                gap: 16px;
+            }
+
+            .nav-container {
+                flex-wrap: wrap;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--surface-dark);
+                flex-direction: column;
+                gap: 0;
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                width: 100%;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 12px 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .nav-links a.active::after {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .logo img {
+                height: 40px;
+            }
+
+            .cta-button {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+
+            .hero {
+                padding: 60px 16px 40px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+                margin: -20px auto 40px;
+            }
+
+            .domains-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                margin: 40px auto;
+                padding: 0 16px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .phone-number,
+            .email-info {
+                font-size: 12px;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .domain-card {
+                padding: 20px;
+            }
+
+            .contact-form {
+                padding: 24px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Theme Toggle Switch - Top Left -->
+    <div class="theme-toggle-container">
+        <span class="theme-toggle-label">Theme:</span>
+        <div class="theme-switch" id="theme-switch" onclick="toggleTheme()">
+            <div class="theme-switch-slider">
+                <i class="fas fa-moon" id="theme-icon" style="color: #666;"></i>
+            </div>
+        </div>
+    </div>
+
     <div class="top-bar">
         <div class="top-bar-container">
-            <div class="phone-number">
-                <i class="fas fa-phone-alt"></i>
-                <span>+91 9370208878</span>
-            </div>
-            <div class="social-links">
-                <a href="https://twitter.com/thesigmacompany" target="_blank" title="X (Twitter)">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
-                <a href="https://wa.me/919370208878" target="_blank" title="WhatsApp">
-                    <i class="fa-brands fa-whatsapp"></i>
-                </a>
-                <a href="https://instagram.com/hrithik__oswal" target="_blank" title="Instagram">
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-                <a href="https://www.linkedin.com/in/ca-hrithik-oswal/" target="_blank" title="LinkedIn">
-                    <i class="fa-brands fa-linkedin-in"></i>
-                </a>
+            <div class="contact-info">
+                <div class="phone-number">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+919370208878">+91 9370208878</a>
+                </div>
+                <div class="email-info">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:contact@thesigmacompany.com">contact@thesigmacompany.com</a>
+                </div>
             </div>
         </div>
     </div>
@@ -765,13 +1015,16 @@
             <a href="#" class="logo" onclick="showPage('home'); return false;">
                 <img src="logo.png" alt="The Sigma Company">
             </a>
-            <ul class="nav-links">
-                <li><a href="#" class="active" data-page="home" onclick="showPage('home'); return false;">Home</a></li>
-                <li><a href="#" data-page="about" onclick="showPage('about'); return false;">About Us</a></li>
-                <li><a href="#" data-page="news" onclick="showPage('news'); return false;">News</a></li>
-                <li><a href="#" data-page="services" onclick="showPage('services'); return false;">Services</a></li>
-                <li><a href="#" data-page="pricing" onclick="showPage('pricing'); return false;">Pricing</a></li>
-                <li><a href="#" data-page="contact" onclick="showPage('contact'); return false;">Contact Us</a></li>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#" class="active" data-page="home" onclick="showPage('home'); closeMobileMenu(); return false;">Home</a></li>
+                <li><a href="#" data-page="about" onclick="showPage('about'); closeMobileMenu(); return false;">About Us</a></li>
+                <li><a href="#" data-page="news" onclick="showPage('news'); closeMobileMenu(); return false;">News</a></li>
+                <li><a href="#" data-page="services" onclick="showPage('services'); closeMobileMenu(); return false;">Services</a></li>
+                <li><a href="#" data-page="pricing" onclick="showPage('pricing'); closeMobileMenu(); return false;">Pricing</a></li>
+                <li><a href="#" data-page="contact" onclick="showPage('contact'); closeMobileMenu(); return false;">Contact Us</a></li>
             </ul>
             <a href="#" class="cta-button" onclick="showPage('contact'); return false;">Get Started</a>
         </div>
@@ -832,7 +1085,7 @@
             </div>
         </section>
 
-        <section class="section" style="background: var(--surface-dark); padding: 80px 40px; margin: 0; max-width: 100%;">
+        <section class="section" style="background: var(--surface-dark); padding: 60px 20px; margin: 0 0 60px 0; max-width: 100%;">
             <div style="max-width: 1200px; margin: 0 auto;">
                 <h2 class="section-title">Our Core CFO Services</h2>
                 <p class="section-subtitle">Comprehensive financial leadership tailored to your business needs</p>
@@ -916,21 +1169,21 @@
                 <h1 class="section-title">About The Sigma Company</h1>
                 <p class="section-subtitle">Pioneering financial excellence through innovation and expertise</p>
                 
-                <div style="background: var(--surface-dark); padding: 48px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 48px;">
-                    <h2 style="font-size: 32px; margin-bottom: 24px; color: var(--text-primary);">Our Story</h2>
-                    <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
+                <div style="background: var(--surface-dark); padding: 32px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 40px;">
+                    <h2 style="font-size: clamp(24px, 4vw, 32px); margin-bottom: 20px; color: var(--text-primary);">Our Story</h2>
+                    <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
                         The Sigma Company was founded with a singular vision: to democratize access to world-class CFO services and financial analytics for businesses of all sizes. We recognized that growing companies needed strategic financial leadership but couldn't always afford full-time C-suite executives.
                     </p>
-                    <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
+                    <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
                         With over 15 years of combined experience across finance, technology, and consulting, our team has worked with Fortune 500 companies, fast-growing startups, and everything in between. We've seen firsthand how data-driven financial decision-making separates thriving businesses from struggling ones.
                     </p>
-                    <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.8;">
+                    <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
                         Today, we serve 100+ clients across diverse industries, providing fractional CFO services, advanced analytics, and strategic financial consulting. Our mission is to empower business leaders with the insights and expertise they need to make confident decisions and drive sustainable growth.
                     </p>
                 </div>
 
-                <h2 class="section-title" style="margin-top: 80px;">Our Core Values</h2>
-                <div class="domains-grid" style="margin-top: 48px;">
+                <h2 class="section-title" style="margin-top: 60px;">Our Core Values</h2>
+                <div class="domains-grid" style="margin-top: 40px;">
                     <div class="domain-card">
                         <div class="domain-icon">🎯</div>
                         <h3>Data-Driven Excellence</h3>
@@ -956,24 +1209,24 @@
                     </div>
                 </div>
 
-                <div style="background: var(--surface-dark); padding: 48px; border-radius: 16px; border: 1px solid var(--border-color); margin-top: 80px;">
-                    <h2 style="font-size: 32px; margin-bottom: 24px; color: var(--text-primary); text-align: center;">Why Choose Us?</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px; margin-top: 40px;">
+                <div style="background: var(--surface-dark); padding: 32px; border-radius: 16px; border: 1px solid var(--border-color); margin-top: 60px;">
+                    <h2 style="font-size: clamp(24px, 4vw, 32px); margin-bottom: 20px; color: var(--text-primary); text-align: center;">Why Choose Us?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-top: 32px;">
                         <div>
-                            <h3 style="color: var(--primary-blue); font-size: 20px; margin-bottom: 12px;">✓ Experienced Team</h3>
-                            <p style="color: var(--text-secondary); font-size: 15px;">Certified professionals with decades of combined experience in finance and analytics</p>
+                            <h3 style="color: var(--primary-blue); font-size: 18px; margin-bottom: 10px;">✓ Experienced Team</h3>
+                            <p style="color: var(--text-secondary); font-size: 14px;">Certified professionals with decades of combined experience in finance and analytics</p>
                         </div>
                         <div>
-                            <h3 style="color: var(--primary-blue); font-size: 20px; margin-bottom: 12px;">✓ Flexible Engagement</h3>
-                            <p style="color: var(--text-secondary); font-size: 15px;">Fractional services that scale with your needs without the overhead of full-time hiring</p>
+                            <h3 style="color: var(--primary-blue); font-size: 18px; margin-bottom: 10px;">✓ Flexible Engagement</h3>
+                            <p style="color: var(--text-secondary); font-size: 14px;">Fractional services that scale with your needs without the overhead of full-time hiring</p>
                         </div>
                         <div>
-                            <h3 style="color: var(--primary-blue); font-size: 20px; margin-bottom: 12px;">✓ Technology-Enabled</h3>
-                            <p style="color: var(--text-secondary); font-size: 15px;">Leverage latest fintech tools and analytics platforms for maximum efficiency</p>
+                            <h3 style="color: var(--primary-blue); font-size: 18px; margin-bottom: 10px;">✓ Technology-Enabled</h3>
+                            <p style="color: var(--text-secondary); font-size: 14px;">Leverage latest fintech tools and analytics platforms for maximum efficiency</p>
                         </div>
                         <div>
-                            <h3 style="color: var(--primary-blue); font-size: 20px; margin-bottom: 12px;">✓ Proven Results</h3>
-                            <p style="color: var(--text-secondary); font-size: 15px;">Track record of helping clients achieve 25-40% improvement in financial performance</p>
+                            <h3 style="color: var(--primary-blue); font-size: 18px; margin-bottom: 10px;">✓ Proven Results</h3>
+                            <p style="color: var(--text-secondary); font-size: 14px;">Track record of helping clients achieve 25-40% improvement in financial performance</p>
                         </div>
                     </div>
                 </div>
@@ -1053,39 +1306,39 @@
                 <h1 class="section-title">Pricing Plans</h1>
                 <p class="section-subtitle">Flexible engagement models designed to scale with your business</p>
                 
-                <div class="domains-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 60px;">
-                    <div class="domain-card" style="padding: 40px;">
-                        <h3 style="font-size: 28px; margin-bottom: 16px;">Startup</h3>
-                        <div style="font-size: 48px; color: var(--primary-blue); font-weight: 700; margin: 20px 0;">₹25,000</div>
-                        <p style="margin-bottom: 24px; color: var(--text-secondary);">per month</p>
-                        <ul style="text-align: left; list-style: none; margin: 24px 0;">
+                <div class="domains-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 48px;">
+                    <div class="domain-card" style="padding: 32px;">
+                        <h3 style="font-size: 24px; margin-bottom: 16px;">Startup</h3>
+                        <div style="font-size: 40px; color: var(--primary-blue); font-weight: 700; margin: 16px 0;">₹25,000</div>
+                        <p style="margin-bottom: 20px; color: var(--text-secondary);">per month</p>
+                        <ul style="text-align: left; list-style: none; margin: 20px 0;">
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Monthly financial review</li>
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Basic KPI dashboard</li>
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Cash flow forecasting</li>
                             <li style="padding: 10px 0; color: var(--text-secondary);">✓ Email support</li>
                         </ul>
-                        <a href="#" class="cta-button" style="width: 100%; text-align: center; display: block; margin-top: 24px;" onclick="showPage('contact'); return false;">Get Started</a>
+                        <a href="#" class="cta-button" style="width: 100%; text-align: center; display: block; margin-top: 20px;" onclick="showPage('contact'); return false;">Get Started</a>
                     </div>
                     
-                    <div class="domain-card" style="padding: 40px; border-color: var(--primary-blue);">
-                        <h3 style="font-size: 28px; margin-bottom: 16px;">Growth</h3>
-                        <div style="font-size: 48px; color: var(--primary-blue); font-weight: 700; margin: 20px 0;">₹75,000</div>
-                        <p style="margin-bottom: 24px; color: var(--text-secondary);">per month</p>
-                        <ul style="text-align: left; list-style: none; margin: 24px 0;">
+                    <div class="domain-card" style="padding: 32px; border-color: var(--primary-blue);">
+                        <h3 style="font-size: 24px; margin-bottom: 16px;">Growth</h3>
+                        <div style="font-size: 40px; color: var(--primary-blue); font-weight: 700; margin: 16px 0;">₹75,000</div>
+                        <p style="margin-bottom: 20px; color: var(--text-secondary);">per month</p>
+                        <ul style="text-align: left; list-style: none; margin: 20px 0;">
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Bi-weekly strategic reviews</li>
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Advanced analytics dashboard</li>
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Quarterly budgeting & forecasting</li>
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Fundraising support</li>
                             <li style="padding: 10px 0; color: var(--text-secondary);">✓ Priority support</li>
                         </ul>
-                        <a href="#" class="cta-button" style="width: 100%; text-align: center; display: block; margin-top: 24px;" onclick="showPage('contact'); return false;">Get Started</a>
+                        <a href="#" class="cta-button" style="width: 100%; text-align: center; display: block; margin-top: 20px;" onclick="showPage('contact'); return false;">Get Started</a>
                     </div>
                     
-                    <div class="domain-card" style="padding: 40px;">
-                        <h3 style="font-size: 28px; margin-bottom: 16px;">Enterprise</h3>
-                        <div style="font-size: 48px; color: var(--primary-blue); font-weight: 700; margin: 20px 0;">Custom</div>
-                        <p style="margin-bottom: 24px; color: var(--text-secondary);">tailored solution</p>
-                        <ul style="text-align: left; list-style: none; margin: 24px 0;">
+                    <div class="domain-card" style="padding: 32px;">
+                        <h3 style="font-size: 24px; margin-bottom: 16px;">Enterprise</h3>
+                        <div style="font-size: 40px; color: var(--primary-blue); font-weight: 700; margin: 16px 0;">Custom</div>
+                        <p style="margin-bottom: 20px; color: var(--text-secondary);">tailored solution</p>
+                        <ul style="text-align: left; list-style: none; margin: 20px 0;">
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Dedicated CFO partnership</li>
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Custom analytics platform</li>
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Comprehensive FP&A</li>
@@ -1093,7 +1346,7 @@
                             <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Board presentation support</li>
                             <li style="padding: 10px 0; color: var(--text-secondary);">✓ 24/7 dedicated support</li>
                         </ul>
-                        <a href="#" class="cta-button" style="width: 100%; text-align: center; display: block; margin-top: 24px;" onclick="showPage('contact'); return false;">Contact Sales</a>
+                        <a href="#" class="cta-button" style="width: 100%; text-align: center; display: block; margin-top: 20px;" onclick="showPage('contact'); return false;">Contact Sales</a>
                     </div>
                 </div>
             </div>
@@ -1109,35 +1362,35 @@
                 
                 <div class="contact-grid">
                     <div>
-                        <div class="contact-info-card" style="margin-bottom: 24px;">
+                        <div class="contact-info-card" style="margin-bottom: 20px;">
                             <div class="contact-icon">
-                                <i class="fas fa-phone-alt"></i>
+                                <i class="fas fa-phone"></i>
                             </div>
-                            <h3 style="font-size: 20px; margin-bottom: 12px; color: var(--text-primary);">Phone</h3>
-                            <p style="color: var(--text-secondary); margin-bottom: 8px;">+91 9370208878</p>
-                            <p style="color: var(--text-tertiary); font-size: 14px;">Mon-Fri, 9:00 AM - 6:00 PM IST</p>
+                            <h3 style="font-size: 18px; margin-bottom: 10px; color: var(--text-primary);">Phone</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 6px;"><a href="tel:+919370208878" style="color: var(--text-secondary); text-decoration: none;">+91 9370208878</a></p>
+                            <p style="color: var(--text-tertiary); font-size: 13px;">Mon-Fri, 9:00 AM - 6:00 PM IST</p>
                         </div>
                         
-                        <div class="contact-info-card" style="margin-bottom: 24px;">
+                        <div class="contact-info-card" style="margin-bottom: 20px;">
                             <div class="contact-icon">
                                 <i class="fas fa-envelope"></i>
                             </div>
-                            <h3 style="font-size: 20px; margin-bottom: 12px; color: var(--text-primary);">Email</h3>
-                            <p style="color: var(--text-secondary); margin-bottom: 8px;">contact@thesigmacompany.com</p>
-                            <p style="color: var(--text-tertiary); font-size: 14px;">We'll respond within 24 hours</p>
+                            <h3 style="font-size: 18px; margin-bottom: 10px; color: var(--text-primary);">Email</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 6px;"><a href="mailto:contact@thesigmacompany.com" style="color: var(--text-secondary); text-decoration: none;">contact@thesigmacompany.com</a></p>
+                            <p style="color: var(--text-tertiary); font-size: 13px;">We'll respond within 24 hours</p>
                         </div>
                         
                         <div class="contact-info-card">
                             <div class="contact-icon">
                                 <i class="fas fa-map-marker-alt"></i>
                             </div>
-                            <h3 style="font-size: 20px; margin-bottom: 12px; color: var(--text-primary);">Office</h3>
+                            <h3 style="font-size: 18px; margin-bottom: 10px; color: var(--text-primary);">Office</h3>
                             <p style="color: var(--text-secondary);">123 Business District<br>Financial Hub, Mumbai<br>Maharashtra 400001, India</p>
                         </div>
                     </div>
                     
                     <div class="contact-form">
-                        <h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-primary);">Send us a message</h3>
+                        <h3 style="font-size: 22px; margin-bottom: 20px; color: var(--text-primary);">Send us a message</h3>
                         <form onsubmit="return handleFormSubmit(event)">
                             <div class="form-group">
                                 <label>Your Name *</label>
@@ -1163,7 +1416,7 @@
                                 <label>Message *</label>
                                 <textarea placeholder="Tell us about your needs..." required></textarea>
                             </div>
-                            <button type="submit" class="cta-button" style="width: 100%; padding: 16px;">Send Message</button>
+                            <button type="submit" class="cta-button" style="width: 100%; padding: 14px;">Send Message</button>
                         </form>
                     </div>
                 </div>
@@ -1225,20 +1478,82 @@
     </footer>
 
     <script>
+        // Theme Toggle Functionality
+        function toggleTheme() {
+            const root = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const themeSwitch = document.getElementById('theme-switch');
+            const currentTheme = root.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                root.setAttribute('data-theme', 'light');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                themeSwitch.classList.remove('active');
+                localStorage.setItem('theme', 'light');
+            } else {
+                root.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                themeSwitch.classList.add('active');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize theme on page load
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeSwitch = document.getElementById('theme-switch');
+            
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                if (savedTheme === 'dark') {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    themeSwitch.classList.add('active');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                    themeSwitch.classList.remove('active');
+                }
+            } else {
+                // Use system preference
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    themeSwitch.classList.add('active');
+                }
+            }
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.remove('active');
+        }
+
         function loadNewsFromExcel() {
             const newsContainer = document.getElementById('news-container');
+            const excelUrl = 'https://raw.githubusercontent.com/hrithik1603/thesigmacompany/main/financial_news.xlsx';
             
-            // Your GitHub repository details - ALREADY CONFIGURED
-            const GITHUB_USERNAME = 'hrithik1603';
-            const REPO_NAME = 'thesigmacompany';
-            const BRANCH = 'main';
-            
-            // GitHub Raw URL for the Excel file
-            const excelUrl = `https://raw.githubusercontent.com/hrithik1603/thesigmacompany/6c9efae5dfcdce8b7e03fe0620193a1509c919f8/financial_news.xlsx`;
+            newsContainer.innerHTML = `
+                <div class="loading-message">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 32px; margin-bottom: 16px; display: block;"></i>
+                    Loading news from GitHub...
+                </div>
+            `;
             
             fetch(excelUrl)
                 .then(response => {
-                    if (!response.ok) throw new Error('Excel file not found');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     return response.arrayBuffer();
                 })
                 .then(data => {
@@ -1287,12 +1602,17 @@
                         <div class="error-message">
                             <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
                             <p><strong>Unable to load news</strong></p>
-                            <p style="margin-top: 12px;">Please ensure financial_news.xlsx is uploaded to your GitHub repository.</p>
+                            <p style="margin-top: 12px;">Error: ${error.message}</p>
                             <p style="margin-top: 16px; font-size: 14px; background: var(--surface-elevated); padding: 12px; border-radius: 8px;">
-                                Expected location:<br>
-                                <code style="color: var(--primary-blue);">${excelUrl}</code>
+                                Trying to load from:<br>
+                                <code style="color: var(--primary-blue); word-break: break-all;">${excelUrl}</code>
                             </p>
-                            <p style="margin-top: 12px; font-size: 14px;">Make sure the file is in the root directory (same folder as index.html)</p>
+                            <p style="margin-top: 12px; font-size: 14px;">
+                                <strong>Troubleshooting:</strong><br>
+                                1. Ensure financial_news.xlsx is in the main branch<br>
+                                2. File should be in root directory (same as index.html)<br>
+                                3. Check if the repository is public
+                            </p>
                         </div>
                     `;
                 });
@@ -1346,6 +1666,8 @@
             observer.observe(element);
         });
 
+        // Initialize theme and show home page
+        initTheme();
         showPage('home');
     </script>
 </body>
