@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sigma Company - CFO & Analytics Services</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #8ab4f8;
+            --secondary-blue: #4285f4;
+            --accent-blue: #1a73e8;
+            --dark-bg: #0b0b0f;
+            --surface-dark: #1a1a1e;
+            --surface-elevated: #25252a;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-tertiary: #5f6368;
+            --border-color: #3c4043;
+            --gradient-blue: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+            --gradient-surface: linear-gradient(180deg, #1a1a1e 0%, #0b0b0f 100%);
+        }
+
+        body {
+            font-family: 'Google Sans', 'Segoe UI', 'Roboto', Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .top-bar {
+            background: var(--surface-dark);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 0;
+        }
+
+        .top-bar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .phone-number {
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .phone-number i {
+            color: var(--primary-blue);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            font-size: 18px;
+            transition: all 0.3s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--surface-elevated);
+        }
+
+        .social-links a:hover {
+            color: var(--primary-blue);
+            background: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: rgba(11, 11, 15, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 15px 0;
+            background: rgba(11, 11, 15, 0.98);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-blue);
+        }
+
+        .cta-button {
+            background: var(--gradient-blue);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 115, 232, 0.4);
+        }
+
+        .hero {
+            padding: 100px 40px 80px;
+            background: var(--gradient-surface);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(26, 115, 232, 0.15) 0%, transparent 70%);
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            line-height: 1.1;
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 strong {
+            background: linear-gradient(135deg, #8ab4f8, #4285f4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.4s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .secondary-button {
+            background: transparent;
+            color: var(--primary-blue);
+            padding: 12px 28px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background: var(--surface-elevated);
+            border-color: var(--primary-blue);
+        }
+
+        .stats {
+            max-width: 1200px;
+            margin: -40px auto 80px;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stat-card {
+            background: var(--surface-dark);
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .section {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 40px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .domains-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .domain-card {
+            background: var(--surface-dark);
+            padding: 32px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .domain-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+        }
+
+        .domain-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .domain-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .domain-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .news-card {
+            background: var(--surface-dark);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+        }
+
+        .news-thumbnail {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--surface-elevated);
+        }
+
+        .news-content {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .news-description {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 16px;
+            flex: 1;
+            line-height: 1.6;
+        }
+
+        .news-opinion {
+            background: var(--surface-elevated);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .news-source {
+            font-size: 13px;
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        .news-details {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #ea4335;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .cta-section {
+            background: var(--gradient-blue);
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin: 80px 0;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-section h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            margin-bottom: 32px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-white-button {
+            background: white;
+            color: var(--accent-blue);
+            padding: 16px 40px;
+            border-radius: 28px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-white-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+        }
+
+        footer {
+            background: var(--dark-bg);
+            color: var(--text-secondary);
+            padding: 60px 40px 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 48px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 14px;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-blue);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .footer-bottom a {
+            color: var(--text-tertiary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-bottom a:hover {
+            color: var(--primary-blue);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-content {
+            min-height: 60vh;
+            padding: 100px 40px 80px;
+        }
+
+        .page-content-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .domains-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .logo img {
+                height: 45px;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::selection {
+            background: var(--primary-blue);
+            color: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface-elevated);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Contact Form Styles */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 48px;
+            margin-top: 60px;
+        }
+
+        .contact-info-card {
+            background: var(--surface-dark);
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .contact-info-card:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-4px);
+        }
+
+        .contact-icon {
+            font-size: 48px;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+
+        .contact-form {
+            background: var(--surface-dark);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar-container">
+            <div class="phone-number">
+                <i class="fas fa-phone-alt"></i>
+                <span>+91 9370208878</span>
+            </div>
+            <div class="social-links">
+                <a href="https://twitter.com/thesigmacompany" target="_blank" title="X (Twitter)">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <a href="https://wa.me/919370208878" target="_blank" title="WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                <a href="https://instagram.com/hrithik__oswal" target="_blank" title="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/ca-hrithik-oswal/" target="_blank" title="LinkedIn">
+                    <i class="fa-brands fa-linkedin-in"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showPage('home'); return false;">
+                <img src="logo.png" alt="The Sigma Company">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-page="home" onclick="showPage('home'); return false;">Home</a></li>
+                <li><a href="#" data-page="about" onclick="showPage('about'); return false;">About Us</a></li>
+                <li><a href="#" data-page="news" onclick="showPage('news'); return false;">News</a></li>
+                <li><a href="#" data-page="services" onclick="showPage('services'); return false;">Services</a></li>
+                <li><a href="#" data-page="pricing" onclick="showPage('pricing'); return false;">Pricing</a></li>
+                <li><a href="#" data-page="contact" onclick="showPage('contact'); return false;">Contact Us</a></li>
+            </ul>
+            <a href="#" class="cta-button" onclick="showPage('contact'); return false;">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <div id="home-page" class="page">
+        <section class="hero">
+            <h1>Welcome to <strong>THE SIGΣA COMPANY</strong></h1>
+            <p>Empowering businesses with data-driven CFO services, advanced analytics, and strategic financial intelligence</p>
+            <div class="hero-buttons">
+                <a href="#" class="cta-button" onclick="showPage('services'); return false;">Explore CFO Services</a>
+                <a href="#" class="secondary-button" onclick="showPage('contact'); return false;">Schedule Consultation</a>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card fade-in">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Clients</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">15 Years</div>
+                <div class="stat-label">Combined Experience</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">20+</div>
+                <div class="stat-label">Employees</div>
+            </div>
+        </section>
+
+        <!-- Our Vision & Mission -->
+        <section class="section">
+            <h2 class="section-title">What We Aim to Achieve</h2>
+            <p class="section-subtitle">Transforming financial decision-making through cutting-edge analytics and strategic CFO services</p>
+            
+            <div class="domains-grid">
+                <div class="domain-card fade-in">
+                    <div class="domain-icon">📊</div>
+                    <h3>Data-Driven Insights</h3>
+                    <p>Leveraging advanced analytics and AI to provide real-time financial intelligence that drives strategic business decisions and maximizes profitability</p>
+                </div>
+                
+                <div class="domain-card fade-in">
+                    <div class="domain-icon">🎯</div>
+                    <h3>Strategic CFO Services</h3>
+                    <p>Fractional CFO services that bring C-suite financial expertise to growing businesses without the full-time cost, enabling smarter financial planning</p>
+                </div>
+                
+                <div class="domain-card fade-in">
+                    <div class="domain-icon">📈</div>
+                    <h3>Growth Optimization</h3>
+                    <p>Identifying growth opportunities through comprehensive financial modeling, scenario planning, and performance benchmarking against industry standards</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core CFO Services -->
+        <section class="section" style="background: var(--surface-dark); padding: 80px 40px; margin: 0; max-width: 100%;">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <h2 class="section-title">Our Core CFO Services</h2>
+                <p class="section-subtitle">Comprehensive financial leadership tailored to your business needs</p>
+                
+                <div class="domains-grid">
+                    <div class="domain-card fade-in" style="text-align: left;">
+                        <div class="domain-icon">💼</div>
+                        <h3>Financial Planning & Analysis</h3>
+                        <p>Strategic budgeting, forecasting, and financial modeling to guide business decisions. We analyze cash flow patterns, create detailed financial projections, and develop actionable insights for sustainable growth.</p>
+                    </div>
+                    
+                    <div class="domain-card fade-in" style="text-align: left;">
+                        <div class="domain-icon">🔍</div>
+                        <h3>Management Reporting & KPIs</h3>
+                        <p>Custom dashboards and real-time reporting systems that track critical business metrics. We design KPI frameworks that align with your strategic objectives and provide visibility into operational performance.</p>
+                    </div>
+                    
+                    <div class="domain-card fade-in" style="text-align: left;">
+                        <div class="domain-icon">💰</div>
+                        <h3>Cash Flow Management</h3>
+                        <p>Optimize working capital through advanced cash flow forecasting and liquidity management. We implement strategies to improve collection cycles, manage payables, and maintain healthy cash reserves.</p>
+                    </div>
+                    
+                    <div class="domain-card fade-in" style="text-align: left;">
+                        <div class="domain-icon">📋</div>
+                        <h3>Fundraising & Investor Relations</h3>
+                        <p>Support for capital raising activities including preparation of pitch decks, financial models, and investor presentations. We help structure deals and manage investor communication throughout the funding process.</p>
+                    </div>
+                    
+                    <div class="domain-card fade-in" style="text-align: left;">
+                        <div class="domain-icon">⚖️</div>
+                        <h3>Compliance & Risk Management</h3>
+                        <p>Ensure regulatory compliance and implement robust internal controls. We identify financial risks, develop mitigation strategies, and maintain audit-ready financial records to protect your business.</p>
+                    </div>
+                    
+                    <div class="domain-card fade-in" style="text-align: left;">
+                        <div class="domain-icon">🤝</div>
+                        <h3>M&A Advisory & Due Diligence</h3>
+                        <p>Expert guidance through mergers, acquisitions, and strategic partnerships. We conduct comprehensive financial due diligence, valuation analysis, and post-merger integration planning.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Capabilities -->
+        <section class="section">
+            <h2 class="section-title">Advanced Analytics Capabilities</h2>
+            <p class="section-subtitle">Turning financial data into competitive advantage</p>
+            
+            <div class="domains-grid">
+                <div class="domain-card fade-in">
+                    <div class="domain-icon">📉</div>
+                    <h3>Predictive Analytics</h3>
+                    <p>Machine learning models that forecast revenue trends, identify potential risks, and predict customer behavior for proactive business planning</p>
+                </div>
+                
+                <div class="domain-card fade-in">
+                    <div class="domain-icon">🔬</div>
+                    <h3>Business Intelligence</h3>
+                    <p>Interactive dashboards and automated reporting systems that provide real-time visibility into key metrics across all business functions</p>
+                </div>
+                
+                <div class="domain-card fade-in">
+                    <div class="domain-icon">🎲</div>
+                    <h3>Scenario Modeling</h3>
+                    <p>What-if analysis and sensitivity testing to evaluate strategic options and prepare for various market conditions and business scenarios</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Ready to Transform Your Financial Operations?</h2>
+            <p>Let's discuss how our CFO services and analytics can accelerate your business growth</p>
+            <a href="#" class="cta-white-button" onclick="showPage('contact'); return false;">Schedule a Consultation</a>
+        </section>
+    </div>
+
+    <!-- ABOUT US PAGE -->
+    <div id="about-page" class="page hidden">
+        <div class="page-content">
+            <div class="page-content-inner">
+                <h1 class="section-title">About The Sigma Company</h1>
+                <p class="section-subtitle">Pioneering financial excellence through innovation and expertise</p>
+                
+                <div style="background: var(--surface-dark); padding: 48px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 48px;">
+                    <h2 style="font-size: 32px; margin-bottom: 24px; color: var(--text-primary);">Our Story</h2>
+                    <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
+                        The Sigma Company was founded with a singular vision: to democratize access to world-class CFO services and financial analytics for businesses of all sizes. We recognized that growing companies needed strategic financial leadership but couldn't always afford full-time C-suite executives.
+                    </p>
+                    <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
+                        With over 15 years of combined experience across finance, technology, and consulting, our team has worked with Fortune 500 companies, fast-growing startups, and everything in between. We've seen firsthand how data-driven financial decision-making separates thriving businesses from struggling ones.
+                    </p>
+                    <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.8;">
+                        Today, we serve 100+ clients across diverse industries, providing fractional CFO services, advanced analytics, and strategic financial consulting. Our mission is to empower business leaders with the insights and expertise they need to make confident decisions and drive sustainable growth.
+                    </p>
+                </div>
+
+                <h2 class="section-title" style="margin-top: 80px;">Our Core Values</h2>
+                <div class="domains-grid" style="margin-top: 48px;">
+                    <div class="domain-card">
+                        <div class="domain-icon">🎯</div>
+                        <h3>Data-Driven Excellence</h3>
+                        <p>We believe every decision should be backed by solid data and rigorous analysis. Our commitment to analytical excellence ensures clients receive insights they can trust.</p>
+                    </div>
+                    
+                    <div class="domain-card">
+                        <div class="domain-icon">🤝</div>
+                        <h3>Client Partnership</h3>
+                        <p>We don't just provide services—we become true partners in our clients' success. Your goals are our goals, and we're invested in helping you achieve them.</p>
+                    </div>
+                    
+                    <div class="domain-card">
+                        <div class="domain-icon">💡</div>
+                        <h3>Continuous Innovation</h3>
+                        <p>The financial landscape evolves constantly, and so do we. We continuously adopt new technologies and methodologies to deliver cutting-edge solutions.</p>
+                    </div>
+                    
+                    <div class="domain-card">
+                        <div class="domain-icon">🔒</div>
+                        <h3>Integrity & Transparency</h3>
+                        <p>We maintain the highest ethical standards in all our work. Honest communication and transparent processes are non-negotiable principles of our practice.</p>
+                    </div>
+                </div>
+
+                <div style="background: var(--surface-dark); padding: 48px; border-radius: 16px; border: 1px solid var(--border-color); margin-top: 80px;">
+                    <h2 style="font-size: 32px; margin-bottom: 24px; color: var(--text-primary); text-align: center;">Why Choose Us?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px; margin-top: 40px;">
+                        <div>
+                            <h3 style="color: var(--primary-blue); font-size: 20px; margin-bottom: 12px;">✓ Experienced Team</h3>
+                            <p style="color: var(--text-secondary); font-size: 15px;">Certified professionals with decades of combined experience in finance and analytics</p>
+                        </div>
+                        <div>
+                            <h3 style="color: var(--primary-blue); font-size: 20px; margin-bottom: 12px;">✓ Flexible Engagement</h3>
+                            <p style="color: var(--text-secondary); font-size: 15px;">Fractional services that scale with your needs without the overhead of full-time hiring</p>
+                        </div>
+                        <div>
+                            <h3 style="color: var(--primary-blue); font-size: 20px; margin-bottom: 12px;">✓ Technology-Enabled</h3>
+                            <p style="color: var(--text-secondary); font-size: 15px;">Leverage latest fintech tools and analytics platforms for maximum efficiency</p>
+                        </div>
+                        <div>
+                            <h3 style="color: var(--primary-blue); font-size: 20px; margin-bottom: 12px;">✓ Proven Results</h3>
+                            <p style="color: var(--text-secondary); font-size: 15px;">Track record of helping clients achieve 25-40% improvement in financial performance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEWS PAGE -->
+    <div id="news-page" class="page hidden">
+        <div class="page-content">
+            <div class="page-content-inner">
+                <h1 class="section-title">Financial Market News</h1>
+                <p class="section-subtitle">Stay updated with the latest developments in financial markets</p>
+                
+                <div id="news-container">
+                    <div class="loading-message">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 32px; margin-bottom: 16px; display: block;"></i>
+                        Loading news from Excel file...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SERVICES PAGE -->
+    <div id="services-page" class="page hidden">
+        <div class="page-content">
+            <div class="page-content-inner">
+                <h1 class="section-title">Our Services</h1>
+                <p class="section-subtitle">Comprehensive CFO and financial analytics solutions</p>
+                
+                <div class="domains-grid">
+                    <div class="domain-card">
+                        <div class="domain-icon">💼</div>
+                        <h3>Fractional CFO Services</h3>
+                        <p>Part-time CFO expertise providing strategic financial leadership, planning, and execution without full-time costs</p>
+                    </div>
+                    
+                    <div class="domain-card">
+                        <div class="domain-icon">📊</div>
+                        <h3>Financial Analytics</h3>
+                        <p>Advanced data analytics and business intelligence solutions to drive informed decision-making</p>
+                    </div>
+                    
+                    <div class="domain-card">
+                        <div class="domain-icon">📈</div>
+                        <h3>FP&A Services</h3>
+                        <p>Comprehensive financial planning, budgeting, forecasting, and scenario analysis</p>
+                    </div>
+                    
+                    <div class="domain-card">
+                        <div class="domain-icon">💰</div>
+                        <h3>Cash Flow Optimization</h3>
+                        <p>Working capital management and liquidity planning to ensure financial stability</p>
+                    </div>
+                    
+                    <div class="domain-card">
+                        <div class="domain-icon">🔍</div>
+                        <h3>Due Diligence</h3>
+                        <p>Financial due diligence for M&A transactions, investments, and strategic partnerships</p>
+                    </div>
+                    
+                    <div class="domain-card">
+                        <div class="domain-icon">⚖️</div>
+                        <h3>Compliance & Controls</h3>
+                        <p>Internal controls implementation and regulatory compliance management</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRICING PAGE -->
+    <div id="pricing-page" class="page hidden">
+        <div class="page-content">
+            <div class="page-content-inner">
+                <h1 class="section-title">Pricing Plans</h1>
+                <p class="section-subtitle">Flexible engagement models designed to scale with your business</p>
+                
+                <div class="domains-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 60px;">
+                    <div class="domain-card" style="padding: 40px;">
+                        <h3 style="font-size: 28px; margin-bottom: 16px;">Startup</h3>
+                        <div style="font-size: 48px; color: var(--primary-blue); font-weight: 700; margin: 20px 0;">₹25,000</div>
+                        <p style="margin-bottom: 24px; color: var(--text-secondary);">per month</p>
+                        <ul style="text-align: left; list-style: none; margin: 24px 0;">
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Monthly financial review</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Basic KPI dashboard</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Cash flow forecasting</li>
+                            <li style="padding: 10px 0; color: var(--text-secondary);">✓ Email support</li>
+                        </ul>
+                        <a href="#" class="cta-button" style="width: 100%; text-align: center; display: block; margin-top: 24px;" onclick="showPage('contact'); return false;">Get Started</a>
+                    </div>
+                    
+                    <div class="domain-card" style="padding: 40px; border-color: var(--primary-blue);">
+                        <h3 style="font-size: 28px; margin-bottom: 16px;">Growth</h3>
+                        <div style="font-size: 48px; color: var(--primary-blue); font-weight: 700; margin: 20px 0;">₹75,000</div>
+                        <p style="margin-bottom: 24px; color: var(--text-secondary);">per month</p>
+                        <ul style="text-align: left; list-style: none; margin: 24px 0;">
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Bi-weekly strategic reviews</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Advanced analytics dashboard</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Quarterly budgeting & forecasting</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Fundraising support</li>
+                            <li style="padding: 10px 0; color: var(--text-secondary);">✓ Priority support</li>
+                        </ul>
+                        <a href="#" class="cta-button" style="width: 100%; text-align: center; display: block; margin-top: 24px;" onclick="showPage('contact'); return false;">Get Started</a>
+                    </div>
+                    
+                    <div class="domain-card" style="padding: 40px;">
+                        <h3 style="font-size: 28px; margin-bottom: 16px;">Enterprise</h3>
+                        <div style="font-size: 48px; color: var(--primary-blue); font-weight: 700; margin: 20px 0;">Custom</div>
+                        <p style="margin-bottom: 24px; color: var(--text-secondary);">tailored solution</p>
+                        <ul style="text-align: left; list-style: none; margin: 24px 0;">
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Dedicated CFO partnership</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Custom analytics platform</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Comprehensive FP&A</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ M&A advisory</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">✓ Board presentation support</li>
+                            <li style="padding: 10px 0; color: var(--text-secondary);">✓ 24/7 dedicated support</li>
+                        </ul>
+                        <a href="#" class="cta-button" style="width: 100%; text-align: center; display: block; margin-top: 24px;" onclick="showPage('contact'); return false;">Contact Sales</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT US PAGE -->
+    <div id="contact-page" class="page hidden">
+        <div class="page-content">
+            <div class="page-content-inner">
+                <h1 class="section-title">Contact Us</h1>
+                <p class="section-subtitle">Get in touch to discuss how we can help transform your financial operations</p>
+                
+                <div class="contact-grid">
+                    <div>
+                        <div class="contact-info-card" style="margin-bottom: 24px;">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <h3 style="font-size: 20px; margin-bottom: 12px; color: var(--text-primary);">Phone</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 8px;">+91 9370208878</p>
+                            <p style="color: var(--text-tertiary); font-size: 14px;">Mon-Fri, 9:00 AM - 6:00 PM IST</p>
+                        </div>
+                        
+                        <div class="contact-info-card" style="margin-bottom: 24px;">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3 style="font-size: 20px; margin-bottom: 12px; color: var(--text-primary);">Email</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 8px;">contact@thesigmacompany.com</p>
+                            <p style="color: var(--text-tertiary); font-size: 14px;">We'll respond within 24 hours</p>
+                        </div>
+                        
+                        <div class="contact-info-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <h3 style="font-size: 20px; margin-bottom: 12px; color: var(--text-primary);">Office</h3>
+                            <p style="color: var(--text-secondary);">123 Business District<br>Financial Hub, Mumbai<br>Maharashtra 400001, India</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-form">
+                        <h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-primary);">Send us a message</h3>
+                        <form onsubmit="return handleFormSubmit(event)">
+                            <div class="form-group">
+                                <label>Your Name *</label>
+                                <input type="text" placeholder="John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address *</label>
+                                <input type="email" placeholder="john@company.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" placeholder="+91 98765 43210">
+                            </div>
+                            <div class="form-group">
+                                <label>Company Name</label>
+                                <input type="text" placeholder="Your Company">
+                            </div>
+                            <div class="form-group">
+                                <label>Subject *</label>
+                                <input type="text" placeholder="How can we help?" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Message *</label>
+                                <textarea placeholder="Tell us about your needs..." required></textarea>
+                            </div>
+                            <button type="submit" class="cta-button" style="width: 100%; padding: 16px;">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>The Sigma Company</h4>
+                <p>Empowering businesses with strategic CFO services and advanced financial analytics.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#" onclick="showPage('home'); return false;">Home</a></li>
+                    <li><a href="#" onclick="showPage('about'); return false;">About Us</a></li>
+                    <li><a href="#" onclick="showPage('news'); return false;">News</a></li>
+                    <li><a href="#" onclick="showPage('services'); return false;">Services</a></li>
+                    <li><a href="#" onclick="showPage('pricing'); return false;">Pricing</a></li>
+                    <li><a href="#" onclick="showPage('contact'); return false;">Contact Us</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#">Fractional CFO</a></li>
+                    <li><a href="#">Financial Analytics</a></li>
+                    <li><a href="#">FP&A Services</a></li>
+                    <li><a href="#">M&A Advisory</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Connect With Us</h4>
+                <div class="social-links" style="justify-content: flex-start; margin-top: 16px;">
+                    <a href="https://twitter.com/thesigmacompany" target="_blank" title="X (Twitter)">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="https://wa.me/919370208878" target="_blank" title="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                    <a href="https://instagram.com/hrithik__oswal" target="_blank" title="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/ca-hrithik-oswal/" target="_blank" title="LinkedIn">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 The Sigma Company. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function loadNewsFromExcel() {
+            const newsContainer = document.getElementById('news-container');
+            
+            fetch('financial_news.xlsx')
+                .then(response => {
+                    if (!response.ok) throw new Error('Excel file not found');
+                    return response.arrayBuffer();
+                })
+                .then(data => {
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    const newsData = jsonData.slice(1);
+                    const top50News = newsData.slice(0, 50);
+                    
+                    if (top50News.length === 0) {
+                        newsContainer.innerHTML = '<div class="error-message">No news found in the Excel file.</div>';
+                        return;
+                    }
+                    
+                    let newsHTML = '<div class="news-grid">';
+                    top50News.forEach((row, index) => {
+                        const thumbnail = row[0] || 'https://via.placeholder.com/400x200/1a1a1e/8ab4f8?text=Financial+News';
+                        const title = row[1] || 'Untitled News';
+                        const description = row[2] || 'No description available.';
+                        const opinion = row[3] || '';
+                        const source = row[4] || 'Unknown Source';
+                        const details = row[5] || '';
+                        
+                        newsHTML += `
+                            <div class="news-card">
+                                <img src="${thumbnail}" alt="${title}" class="news-thumbnail" onerror="this.src='https://via.placeholder.com/400x200/1a1a1e/8ab4f8?text=Financial+News'">
+                                <div class="news-content">
+                                    <h3 class="news-title">${title}</h3>
+                                    <p class="news-description">${description}</p>
+                                    ${opinion ? `<div class="news-opinion"><strong>Opinion:</strong> ${opinion}</div>` : ''}
+                                    <div class="news-footer">
+                                        <span class="news-source">${source}</span>
+                                        ${details ? `<span class="news-details">${details}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    newsHTML += '</div>';
+                    newsContainer.innerHTML = newsHTML;
+                })
+                .catch(error => {
+                    console.error('Error loading news:', error);
+                    newsContainer.innerHTML = `
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+                            <p><strong>Unable to load news automatically</strong></p>
+                            <p style="margin-top: 12px;">To automatically load Excel files, you need to run a local web server.</p>
+                            <p style="margin-top: 16px; font-size: 14px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+                                <strong>Quick Setup:</strong><br><br>
+                                <strong>Using Python:</strong><br>
+                                • Run: <code style="background: var(--surface-elevated); padding: 4px 8px; border-radius: 4px;">python -m http.server 8000</code><br>
+                                • Open: <code style="background: var(--surface-elevated); padding: 4px 8px; border-radius: 4px;">http://localhost:8000</code>
+                            </p>
+                        </div>
+                    `;
+                });
+        }
+
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageName + '-page').classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === pageName) {
+                    link.classList.add('active');
+                }
+            });
+            
+            if (pageName === 'news') loadNewsFromExcel();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            alert('Thank you for your message! We will get back to you within 24 hours.');
+            event.target.reset();
+            return false;
+        }
+
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(element => {
+            observer.observe(element);
+        });
+
+        showPage('home');
+    </script>
+</body>
+</html>
