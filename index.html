@@ -5,7 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Sigma Company - CFO & Analytics Services</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script type="text/javascript" src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js">
+
+        // FD/RD Calculator
+        document.getElementById('fd-rd-type').addEventListener('change', function() {
+            const type = this.value;
+            if (type === 'fd') {
+                document.getElementById('fd-amount-group').style.display = 'block';
+                document.getElementById('rd-amount-group').style.display = 'none';
+            } else {
+                document.getElementById('fd-amount-group').style.display = 'none';
+                document.getElementById('rd-amount-group').style.display = 'block';
+            }
+        });
+
+        function calculateFDRD() {
+            const type = document.getElementById('fd-rd-type').value;
+            const rate = parseFloat(document.getElementById('fd-rd-rate').value);
+            const tenure = parseFloat(document.getElementById('fd-rd-tenure').value);
+            const frequency = parseFloat(document.getElementById('fd-rd-frequency').value);
+
+            if (!rate || !tenure) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            let investment, maturity;
+
+            if (type === 'fd') {
+                const principal = parseFloat(document.getElementById('fd-principal').value);
+                if (!principal) {
+                    alert('Please enter principal amount');
+                    return;
+                }
+
+                investment = principal;
+                maturity = principal * Math.pow(1 + rate/(frequency * 100), frequency * tenure);
+            } else {
+                const monthly = parseFloat(document.getElementById('rd-monthly').value);
+                if (!monthly) {
+                    alert('Please enter monthly deposit');
+                    return;
+                }
+
+                investment = monthly * tenure * 12;
+                // RD maturity calculation
+                const monthlyRate = rate / (12 * 100);
+                const months = tenure * 12;
+                maturity = monthly * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate * (1 + monthlyRate);
+            }
+
+            const interest = maturity - investment;
+
+            document.getElementById('fd-rd-investment').textContent = '₹' + investment.toLocaleString('en-IN');
+            document.getElementById('fd-rd-maturity').textContent = '₹' + maturity.toLocaleString('en-IN');
+            document.getElementById('fd-rd-interest').textContent = '₹' + interest.toLocaleString('en-IN');
+
+            document.getElementById('fd-rd-result').style.display = 'block';
+        }
+
+        function calculateWorkingCapital() {
+            const currentAssets = parseFloat(document.getElementById('wc-current-assets').value);
+            const currentLiabilities = parseFloat(document.getElementById('wc-current-liabilities').value);
+            const cash = parseFloat(document.getElementById('wc-cash').value) || 0;
+            const inventory = parseFloat(document.getElementById('wc-inventory').value) || 0;
+            const receivables = parseFloat(document.getElementById('wc-receivables').value) || 0;
+
+            if (!currentAssets || !currentLiabilities) {
+                alert('Please fill current assets and current liabilities');
+                return;
+            }
+
+            const workingCapital = currentAssets - currentLiabilities;
+            const currentRatio = currentAssets / currentLiabilities;
+            const quickAssets = currentAssets - inventory;
+            const quickRatio = quickAssets / currentLiabilities;
+            const cashRatio = cash / currentLiabilities;
+
+            document.getElementById('wc-working-capital').textContent = '₹' + workingCapital.toLocaleString('en-IN');
+            document.getElementById('wc-current-ratio').textContent = currentRatio.toFixed(2);
+            document.getElementById('wc-quick-ratio').textContent = quickRatio.toFixed(2);
+            document.getElementById('wc-cash-ratio').textContent = cashRatio.toFixed(2);
+
+            document.getElementById('wc-result').style.display = 'block';
+        }
+</script>
     <style>
         * {
             margin: 0;
@@ -1123,7 +1207,49 @@
                 padding: 24px;
             }
         }
-    </style>
+    
+        /* Utilities Hub Styles */
+        .utilities-hub {
+            margin-bottom: 2rem;
+        }
+
+        .hub-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            margin: 0 8px;
+        }
+
+        .tab-button:hover {
+            color: var(--primary-blue);
+        }
+
+        .tab-button.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+</style>
 </head>
 <body>
     <div class="top-bar">
@@ -1310,29 +1436,152 @@
                 <h1 class="section-title">Financial Utilities</h1>
                 <p class="section-subtitle">Professional financial calculators to help with your planning and analysis</p>
                 
-                <div id="utilities-main" class="calculator-grid">
-                    <div class="calculator-card" onclick="showCalculator('emi')">
-                        <div class="calculator-icon">🏦</div>
-                        <h3>EMI Calculator</h3>
-                        <p>Calculate your monthly loan EMI with detailed breakdown of principal and interest</p>
-                    </div>
-                    
-                    <div class="calculator-card" onclick="showCalculator('sip')">
-                        <div class="calculator-icon">📈</div>
-                        <h3>SIP Returns Calculator</h3>
-                        <p>Calculate SIP returns with XIRR to understand your investment growth over time</p>
-                    </div>
-                    
-                    <div class="calculator-card" onclick="showCalculator('tax')">
-                        <div class="calculator-icon">💰</div>
-                        <h3>Income Tax Calculator</h3>
-                        <p>Calculate income tax based on different income heads and applicable deductions</p>
-                    </div>
-                    
-                    <div class="calculator-card" onclick="showCalculator('irr')">
-                        <div class="calculator-icon">📊</div>
-                        <h3>IRR Calculator</h3>
-                        <p>Calculate Internal Rate of Return for your investments and cash flows</p>
+                <div id="utilities-main">
+                    <!-- Utilities Hub Landing -->
+                    <div class="utilities-hub">
+                        <div class="hub-tabs">
+                            <button class="tab-button active" onclick="showTab('personal-finance')">Personal Finance</button>
+                            <button class="tab-button" onclick="showTab('business-finance')">Business Finance</button>
+                            <button class="tab-button" onclick="showTab('investment-analytics')">Investment Analytics</button>
+                        </div>
+
+                        <!-- Personal Finance Tab -->
+                        <div id="personal-finance-tab" class="tab-content active">
+                            <div class="calculator-grid">
+                                <div class="calculator-card" onclick="showCalculator('emi')">
+                                    <div class="calculator-icon">🏦</div>
+                                    <h3>EMI Calculator</h3>
+                                    <p>Calculate your monthly loan EMI with detailed breakdown of principal and interest</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('sip')">
+                                    <div class="calculator-icon">📈</div>
+                                    <h3>SIP Returns Calculator</h3>
+                                    <p>Calculate SIP returns with XIRR to understand your investment growth over time</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('tax')">
+                                    <div class="calculator-icon">💰</div>
+                                    <h3>Income Tax Calculator</h3>
+                                    <p>Calculate income tax based on different income heads and applicable deductions</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('loan-affordability')">
+                                    <div class="calculator-icon">🏠</div>
+                                    <h3>Loan Affordability Calculator</h3>
+                                    <p>Calculates how much loan a user can afford based on income, interest rate, and tenure</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('lumpsum-investment')">
+                                    <div class="calculator-icon">💎</div>
+                                    <h3>Lumpsum Investment Calculator</h3>
+                                    <p>Estimates future value of a one-time investment with compounding returns</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('goal-savings')">
+                                    <div class="calculator-icon">🎯</div>
+                                    <h3>Goal-based Savings Calculator</h3>
+                                    <p>Calculates how much to save monthly to reach a target (like ₹10L in 5 years)</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('fd-rd-returns')">
+                                    <div class="calculator-icon">🏛️</div>
+                                    <h3>FD / RD Returns Calculator</h3>
+                                    <p>Computes maturity value for fixed deposits or recurring deposits</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('credit-card-payoff')">
+                                    <div class="calculator-icon">💳</div>
+                                    <h3>Credit Card Payoff Calculator</h3>
+                                    <p>Shows how long it'll take to repay a credit card balance and total interest</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('new-old-tax')">
+                                    <div class="calculator-icon">📋</div>
+                                    <h3>New vs Old Tax Regime Comparison</h3>
+                                    <p>Calculates tax under both regimes and shows which is better</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('hra-exemption')">
+                                    <div class="calculator-icon">🏘️</div>
+                                    <h3>HRA Exemption Calculator</h3>
+                                    <p>Computes tax exemption for house rent allowance</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('gratuity')">
+                                    <div class="calculator-icon">👔</div>
+                                    <h3>Gratuity Calculator</h3>
+                                    <p>Calculates gratuity for years of service and last drawn salary</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('retirement-corpus')">
+                                    <div class="calculator-icon">🏖️</div>
+                                    <h3>Retirement Corpus Estimator</h3>
+                                    <p>Calculates how much corpus is needed for desired post-retirement income</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('epf-calculator')">
+                                    <div class="calculator-icon">🏦</div>
+                                    <h3>EPF Interest & Maturity Calculator</h3>
+                                    <p>Estimates PF balance growth year-on-year</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('inflation-impact')">
+                                    <div class="calculator-icon">📉</div>
+                                    <h3>Inflation Impact Calculator</h3>
+                                    <p>Shows how inflation erodes purchasing power or future value</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Business Finance Tab -->
+                        <div id="business-finance-tab" class="tab-content">
+                            <div class="calculator-grid">
+                                <div class="calculator-card" onclick="showCalculator('break-even')">
+                                    <div class="calculator-icon">⚖️</div>
+                                    <h3>Break-even Point Calculator</h3>
+                                    <p>Computes units or revenue required to cover fixed and variable costs</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('working-capital')">
+                                    <div class="calculator-icon">💼</div>
+                                    <h3>Working Capital Calculator</h3>
+                                    <p>Measures short-term liquidity: Current Assets – Current Liabilities</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('debt-equity')">
+                                    <div class="calculator-icon">📊</div>
+                                    <h3>Debt-to-Equity & Leverage Analyzer</h3>
+                                    <p>Calculates key ratios for capital structure evaluation</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('company-valuation')">
+                                    <div class="calculator-icon">🏢</div>
+                                    <h3>Company Valuation Estimator (DCF)</h3>
+                                    <p>Takes projected cash flows, discount rate, and terminal value to estimate business valuation</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('z-score')">
+                                    <div class="calculator-icon">⚠️</div>
+                                    <h3>Z-Score (Altman) Bankruptcy Predictor</h3>
+                                    <p>Calculates Altman's Z-score from financial ratios</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('financial-ratio')">
+                                    <div class="calculator-icon">📈</div>
+                                    <h3>Financial Ratio Dashboard</h3>
+                                    <p>Allows upload of financial data (Excel) → displays liquidity, profitability, solvency ratios</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Investment Analytics Tab -->
+                        <div id="investment-analytics-tab" class="tab-content">
+                            <div class="calculator-grid">
+                                <div class="calculator-card" onclick="showCalculator('irr')">
+                                    <div class="calculator-icon">📊</div>
+                                    <h3>IRR Calculator</h3>
+                                    <p>Calculate Internal Rate of Return for your investments and cash flows</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('valuation-multiple')">
+                                    <div class="calculator-icon">🔍</div>
+                                    <h3>Valuation Multiple Comparator</h3>
+                                    <p>Compare P/E, EV/EBITDA, P/S ratios across sectors</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('npv-payback')">
+                                    <div class="calculator-icon">💹</div>
+                                    <h3>NPV & Payback Period Calculator</h3>
+                                    <p>Computes project viability from cash flows</p>
+                                </div>
+                                <div class="calculator-card" onclick="showCalculator('portfolio-diversification')">
+                                    <div class="calculator-icon">🎲</div>
+                                    <h3>Portfolio Diversification Checker</h3>
+                                    <p>Lets users input weights and returns to check diversification & risk-adjusted return</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1542,6 +1791,530 @@
                         </div>
                     </div>
                 </div>
+                <!-- Loan Affordability Calculator -->
+                <div id="loan-affordability-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">Loan Affordability Calculator</h2>
+
+                        <div class="calc-input-group">
+                            <label>Monthly Income (₹)</label>
+                            <input type="number" id="loan-afford-income" placeholder="e.g., 100000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Existing EMIs (₹)</label>
+                            <input type="number" id="loan-afford-existing-emi" placeholder="e.g., 15000" min="0" value="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Interest Rate (% per annum)</label>
+                            <input type="number" id="loan-afford-rate" placeholder="e.g., 8.5" min="0" step="0.1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Loan Tenure (Years)</label>
+                            <input type="number" id="loan-afford-tenure" placeholder="e.g., 20" min="1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Income Utilization Ratio (%)</label>
+                            <input type="number" id="loan-afford-ratio" placeholder="e.g., 40" min="10" max="60" value="40">
+                            <small>Recommended: 40-50% of income for EMI</small>
+                        </div>
+
+                        <button onclick="calculateLoanAffordability()" class="calc-button">Calculate Affordability</button>
+
+                        <div id="loan-afford-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Maximum Affordable EMI:</span>
+                                    <span id="loan-afford-max-emi" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Available EMI Capacity:</span>
+                                    <span id="loan-afford-available-emi" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Maximum Loan Amount:</span>
+                                    <span id="loan-afford-max-loan" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total Interest:</span>
+                                    <span id="loan-afford-total-interest" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total Payment:</span>
+                                    <span id="loan-afford-total-payment" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lumpsum Investment Calculator -->
+                <div id="lumpsum-investment-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">Lumpsum Investment Calculator</h2>
+
+                        <div class="calc-input-group">
+                            <label>Investment Amount (₹)</label>
+                            <input type="number" id="lumpsum-amount" placeholder="e.g., 500000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Expected Annual Return (%)</label>
+                            <input type="number" id="lumpsum-rate" placeholder="e.g., 12" min="0" step="0.1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Investment Period (Years)</label>
+                            <input type="number" id="lumpsum-years" placeholder="e.g., 10" min="1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Compounding Frequency</label>
+                            <select id="lumpsum-frequency">
+                                <option value="1">Annual</option>
+                                <option value="2">Half-yearly</option>
+                                <option value="4">Quarterly</option>
+                                <option value="12" selected>Monthly</option>
+                                <option value="365">Daily</option>
+                            </select>
+                        </div>
+
+                        <button onclick="calculateLumpsum()" class="calc-button">Calculate Returns</button>
+
+                        <div id="lumpsum-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Initial Investment:</span>
+                                    <span id="lumpsum-initial" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Future Value:</span>
+                                    <span id="lumpsum-future" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total Returns:</span>
+                                    <span id="lumpsum-returns" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Absolute Return:</span>
+                                    <span id="lumpsum-absolute" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">CAGR:</span>
+                                    <span id="lumpsum-cagr" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goal-based Savings Calculator -->
+                <div id="goal-savings-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">Goal-based Savings Calculator</h2>
+
+                        <div class="calc-input-group">
+                            <label>Target Amount (₹)</label>
+                            <input type="number" id="goal-target" placeholder="e.g., 1000000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Time Period (Years)</label>
+                            <input type="number" id="goal-years" placeholder="e.g., 5" min="1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Expected Annual Return (%)</label>
+                            <input type="number" id="goal-rate" placeholder="e.g., 12" min="0" step="0.1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Current Savings (₹)</label>
+                            <input type="number" id="goal-current" placeholder="e.g., 100000" min="0" value="0">
+                        </div>
+
+                        <button onclick="calculateGoalSavings()" class="calc-button">Calculate Monthly Savings</button>
+
+                        <div id="goal-savings-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Monthly SIP Required:</span>
+                                    <span id="goal-monthly-sip" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total Investment:</span>
+                                    <span id="goal-total-investment" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Expected Returns:</span>
+                                    <span id="goal-expected-returns" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Current Savings Growth:</span>
+                                    <span id="goal-current-growth" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Break-even Point Calculator -->
+                <div id="break-even-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">Break-even Point Calculator</h2>
+
+                        <div class="calc-input-group">
+                            <label>Fixed Costs (₹)</label>
+                            <input type="number" id="breakeven-fixed" placeholder="e.g., 500000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Variable Cost per Unit (₹)</label>
+                            <input type="number" id="breakeven-variable" placeholder="e.g., 50" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Selling Price per Unit (₹)</label>
+                            <input type="number" id="breakeven-price" placeholder="e.g., 100" min="0">
+                        </div>
+
+                        <button onclick="calculateBreakEven()" class="calc-button">Calculate Break-even</button>
+
+                        <div id="breakeven-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Break-even Units:</span>
+                                    <span id="breakeven-units" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Break-even Revenue:</span>
+                                    <span id="breakeven-revenue" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Contribution Margin:</span>
+                                    <span id="breakeven-margin" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Contribution Margin %:</span>
+                                    <span id="breakeven-margin-percent" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FD/RD Returns Calculator -->
+                <div id="fd-rd-returns-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">FD / RD Returns Calculator</h2>
+
+                        <div class="calc-input-group">
+                            <label>Investment Type</label>
+                            <select id="fd-rd-type">
+                                <option value="fd">Fixed Deposit (FD)</option>
+                                <option value="rd">Recurring Deposit (RD)</option>
+                            </select>
+                        </div>
+
+                        <div class="calc-input-group" id="fd-amount-group">
+                            <label>Principal Amount (₹)</label>
+                            <input type="number" id="fd-principal" placeholder="e.g., 100000" min="0">
+                        </div>
+
+                        <div class="calc-input-group" id="rd-amount-group" style="display:none;">
+                            <label>Monthly Deposit (₹)</label>
+                            <input type="number" id="rd-monthly" placeholder="e.g., 5000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Interest Rate (% per annum)</label>
+                            <input type="number" id="fd-rd-rate" placeholder="e.g., 6.5" min="0" step="0.1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Tenure (Years)</label>
+                            <input type="number" id="fd-rd-tenure" placeholder="e.g., 5" min="1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Compounding Frequency</label>
+                            <select id="fd-rd-frequency">
+                                <option value="4">Quarterly</option>
+                                <option value="2">Half-yearly</option>
+                                <option value="1">Annual</option>
+                            </select>
+                        </div>
+
+                        <button onclick="calculateFDRD()" class="calc-button">Calculate Returns</button>
+
+                        <div id="fd-rd-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Total Investment:</span>
+                                    <span id="fd-rd-investment" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Maturity Amount:</span>
+                                    <span id="fd-rd-maturity" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total Interest:</span>
+                                    <span id="fd-rd-interest" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Working Capital Calculator -->
+                <div id="working-capital-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">Working Capital Calculator</h2>
+
+                        <div class="calc-input-group">
+                            <label>Current Assets (₹)</label>
+                            <input type="number" id="wc-current-assets" placeholder="e.g., 5000000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Current Liabilities (₹)</label>
+                            <input type="number" id="wc-current-liabilities" placeholder="e.g., 2000000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Cash & Equivalents (₹)</label>
+                            <input type="number" id="wc-cash" placeholder="e.g., 500000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Inventory (₹)</label>
+                            <input type="number" id="wc-inventory" placeholder="e.g., 1000000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Accounts Receivable (₹)</label>
+                            <input type="number" id="wc-receivables" placeholder="e.g., 800000" min="0">
+                        </div>
+
+                        <button onclick="calculateWorkingCapital()" class="calc-button">Calculate Working Capital</button>
+
+                        <div id="wc-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Working Capital:</span>
+                                    <span id="wc-working-capital" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Current Ratio:</span>
+                                    <span id="wc-current-ratio" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Quick Ratio:</span>
+                                    <span id="wc-quick-ratio" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Cash Ratio:</span>
+                                    <span id="wc-cash-ratio" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Credit Card Payoff Calculator -->
+                <div id="credit-card-payoff-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">Credit Card Payoff Calculator</h2>
+
+                        <div class="calc-input-group">
+                            <label>Outstanding Balance (₹)</label>
+                            <input type="number" id="cc-balance" placeholder="e.g., 50000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Interest Rate (% per annum)</label>
+                            <input type="number" id="cc-rate" placeholder="e.g., 36" min="0" step="0.1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Monthly Payment (₹)</label>
+                            <input type="number" id="cc-payment" placeholder="e.g., 5000" min="0">
+                        </div>
+
+                        <button onclick="calculateCreditCardPayoff()" class="calc-button">Calculate Payoff Time</button>
+
+                        <div id="cc-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Payoff Time:</span>
+                                    <span id="cc-payoff-time" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total Interest:</span>
+                                    <span id="cc-total-interest" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total Payment:</span>
+                                    <span id="cc-total-payment" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NPV & Payback Period Calculator -->
+                <div id="npv-payback-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">NPV & Payback Period Calculator</h2>
+
+                        <div class="calc-input-group">
+                            <label>Initial Investment (₹)</label>
+                            <input type="number" id="npv-initial" placeholder="e.g., 1000000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Discount Rate (%)</label>
+                            <input type="number" id="npv-discount" placeholder="e.g., 10" min="0" step="0.1">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Annual Cash Flows (₹) - Enter comma separated values</label>
+                            <input type="text" id="npv-cashflows" placeholder="e.g., 200000,300000,400000,500000,600000">
+                        </div>
+
+                        <button onclick="calculateNPV()" class="calc-button">Calculate NPV & Payback</button>
+
+                        <div id="npv-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">NPV:</span>
+                                    <span id="npv-value" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">IRR:</span>
+                                    <span id="npv-irr" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Payback Period:</span>
+                                    <span id="npv-payback" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Profitability Index:</span>
+                                    <span id="npv-pi" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New vs Old Tax Regime Calculator -->
+                <div id="new-old-tax-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">New vs Old Tax Regime Comparison</h2>
+
+                        <div class="calc-input-group">
+                            <label>Annual Gross Income (₹)</label>
+                            <input type="number" id="tax-income" placeholder="e.g., 1200000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>80C Deductions (₹)</label>
+                            <input type="number" id="tax-80c" placeholder="e.g., 150000" min="0" max="150000">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Other Deductions (₹)</label>
+                            <input type="number" id="tax-other" placeholder="e.g., 50000" min="0">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>HRA Exemption (₹)</label>
+                            <input type="number" id="tax-hra" placeholder="e.g., 100000" min="0">
+                        </div>
+
+                        <button onclick="calculateTaxComparison()" class="calc-button">Compare Tax Regimes</button>
+
+                        <div id="tax-comparison-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Old Regime Tax:</span>
+                                    <span id="tax-old-regime" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">New Regime Tax:</span>
+                                    <span id="tax-new-regime" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Savings with Better Option:</span>
+                                    <span id="tax-savings" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Recommended:</span>
+                                    <span id="tax-recommendation" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Diversification Checker -->
+                <div id="portfolio-diversification-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">Portfolio Diversification Checker</h2>
+
+                        <div class="calc-input-group">
+                            <label>Asset Allocations (%) - Format: Equity,Debt,Gold,Real Estate</label>
+                            <input type="text" id="portfolio-weights" placeholder="e.g., 60,30,5,5">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Expected Returns (%) - Format: Equity,Debt,Gold,Real Estate</label>
+                            <input type="text" id="portfolio-returns" placeholder="e.g., 12,7,8,10">
+                        </div>
+
+                        <div class="calc-input-group">
+                            <label>Risk (Standard Deviation %) - Format: Equity,Debt,Gold,Real Estate</label>
+                            <input type="text" id="portfolio-risk" placeholder="e.g., 15,3,12,8">
+                        </div>
+
+                        <button onclick="calculatePortfolioDiversification()" class="calc-button">Analyze Portfolio</button>
+
+                        <div id="portfolio-result" class="calc-result" style="display: none;">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Portfolio Return:</span>
+                                    <span id="portfolio-return" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Portfolio Risk:</span>
+                                    <span id="portfolio-portfolio-risk" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Sharpe Ratio:</span>
+                                    <span id="portfolio-sharpe" class="result-value"></span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Diversification Score:</span>
+                                    <span id="portfolio-diversification" class="result-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
@@ -2212,6 +2985,330 @@
 
         initTheme();
         showPage('home');
-    </script>
+    
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all tab buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            // Add active class to selected tab button
+            event.target.classList.add('active');
+        }
+
+
+
+        function calculateLoanAffordability() {
+            const income = parseFloat(document.getElementById('loan-afford-income').value);
+            const existingEMI = parseFloat(document.getElementById('loan-afford-existing-emi').value) || 0;
+            const rate = parseFloat(document.getElementById('loan-afford-rate').value);
+            const tenure = parseFloat(document.getElementById('loan-afford-tenure').value);
+            const utilizationRatio = parseFloat(document.getElementById('loan-afford-ratio').value) || 40;
+
+            if (!income || !rate || !tenure) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            // Calculate maximum affordable EMI
+            const maxAffordableEMI = (income * utilizationRatio) / 100;
+            const availableEMI = maxAffordableEMI - existingEMI;
+
+            if (availableEMI <= 0) {
+                alert('No EMI capacity available. Please reduce existing EMIs or increase income.');
+                return;
+            }
+
+            // Calculate maximum loan amount
+            const monthlyRate = rate / (12 * 100);
+            const totalMonths = tenure * 12;
+            const maxLoanAmount = availableEMI * ((Math.pow(1 + monthlyRate, totalMonths) - 1) / (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)));
+
+            const totalPayment = availableEMI * totalMonths;
+            const totalInterest = totalPayment - maxLoanAmount;
+
+            // Display results
+            document.getElementById('loan-afford-max-emi').textContent = '₹' + maxAffordableEMI.toLocaleString('en-IN');
+            document.getElementById('loan-afford-available-emi').textContent = '₹' + availableEMI.toLocaleString('en-IN');
+            document.getElementById('loan-afford-max-loan').textContent = '₹' + maxLoanAmount.toLocaleString('en-IN');
+            document.getElementById('loan-afford-total-interest').textContent = '₹' + totalInterest.toLocaleString('en-IN');
+            document.getElementById('loan-afford-total-payment').textContent = '₹' + totalPayment.toLocaleString('en-IN');
+
+            document.getElementById('loan-afford-result').style.display = 'block';
+        }
+
+
+
+        function calculateLumpsum() {
+            const amount = parseFloat(document.getElementById('lumpsum-amount').value);
+            const rate = parseFloat(document.getElementById('lumpsum-rate').value);
+            const years = parseFloat(document.getElementById('lumpsum-years').value);
+            const frequency = parseFloat(document.getElementById('lumpsum-frequency').value);
+
+            if (!amount || !rate || !years) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            // Calculate future value with compound interest
+            const futureValue = amount * Math.pow((1 + rate / (frequency * 100)), frequency * years);
+            const totalReturns = futureValue - amount;
+            const absoluteReturn = ((futureValue - amount) / amount) * 100;
+            const cagr = (Math.pow(futureValue / amount, 1 / years) - 1) * 100;
+
+            // Display results
+            document.getElementById('lumpsum-initial').textContent = '₹' + amount.toLocaleString('en-IN');
+            document.getElementById('lumpsum-future').textContent = '₹' + futureValue.toLocaleString('en-IN');
+            document.getElementById('lumpsum-returns').textContent = '₹' + totalReturns.toLocaleString('en-IN');
+            document.getElementById('lumpsum-absolute').textContent = absoluteReturn.toFixed(2) + '%';
+            document.getElementById('lumpsum-cagr').textContent = cagr.toFixed(2) + '%';
+
+            document.getElementById('lumpsum-result').style.display = 'block';
+        }
+
+
+        function calculateGoalSavings() {
+            const target = parseFloat(document.getElementById('goal-target').value);
+            const years = parseFloat(document.getElementById('goal-years').value);
+            const rate = parseFloat(document.getElementById('goal-rate').value);
+            const current = parseFloat(document.getElementById('goal-current').value) || 0;
+
+            if (!target || !years || !rate) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const monthlyRate = rate / (12 * 100);
+            const months = years * 12;
+
+            // Future value of current savings
+            const currentGrowth = current * Math.pow(1 + rate/100, years);
+
+            // Required amount from SIP
+            const requiredFromSIP = target - currentGrowth;
+
+            // Monthly SIP calculation
+            const monthlySIP = requiredFromSIP * monthlyRate / (Math.pow(1 + monthlyRate, months) - 1);
+            const totalInvestment = (monthlySIP * months) + current;
+            const expectedReturns = target - totalInvestment;
+
+            document.getElementById('goal-monthly-sip').textContent = '₹' + monthlySIP.toLocaleString('en-IN');
+            document.getElementById('goal-total-investment').textContent = '₹' + totalInvestment.toLocaleString('en-IN');
+            document.getElementById('goal-expected-returns').textContent = '₹' + expectedReturns.toLocaleString('en-IN');
+            document.getElementById('goal-current-growth').textContent = '₹' + currentGrowth.toLocaleString('en-IN');
+
+            document.getElementById('goal-savings-result').style.display = 'block';
+        }
+
+        function calculateBreakEven() {
+            const fixedCosts = parseFloat(document.getElementById('breakeven-fixed').value);
+            const variableCost = parseFloat(document.getElementById('breakeven-variable').value);
+            const sellingPrice = parseFloat(document.getElementById('breakeven-price').value);
+
+            if (!fixedCosts || !variableCost || !sellingPrice) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            if (sellingPrice <= variableCost) {
+                alert('Selling price must be greater than variable cost per unit');
+                return;
+            }
+
+            const contributionMargin = sellingPrice - variableCost;
+            const contributionMarginPercent = (contributionMargin / sellingPrice) * 100;
+            const breakEvenUnits = Math.ceil(fixedCosts / contributionMargin);
+            const breakEvenRevenue = breakEvenUnits * sellingPrice;
+
+            document.getElementById('breakeven-units').textContent = breakEvenUnits.toLocaleString('en-IN');
+            document.getElementById('breakeven-revenue').textContent = '₹' + breakEvenRevenue.toLocaleString('en-IN');
+            document.getElementById('breakeven-margin').textContent = '₹' + contributionMargin.toLocaleString('en-IN');
+            document.getElementById('breakeven-margin-percent').textContent = contributionMarginPercent.toFixed(2) + '%';
+
+            document.getElementById('breakeven-result').style.display = 'block';
+        }
+
+
+        function calculateCreditCardPayoff() {
+            const balance = parseFloat(document.getElementById('cc-balance').value);
+            const rate = parseFloat(document.getElementById('cc-rate').value);
+            const payment = parseFloat(document.getElementById('cc-payment').value);
+
+            if (!balance || !rate || !payment) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const monthlyRate = rate / (12 * 100);
+
+            if (payment <= (balance * monthlyRate)) {
+                alert('Monthly payment is too low to pay off the balance');
+                return;
+            }
+
+            const months = Math.ceil(Math.log(1 + (balance * monthlyRate) / payment) / Math.log(1 + monthlyRate));
+            const totalPayment = payment * months;
+            const totalInterest = totalPayment - balance;
+
+            const years = Math.floor(months / 12);
+            const remainingMonths = months % 12;
+
+            let payoffTime = '';
+            if (years > 0) payoffTime += years + ' year' + (years > 1 ? 's' : '');
+            if (remainingMonths > 0) {
+                if (years > 0) payoffTime += ' ';
+                payoffTime += remainingMonths + ' month' + (remainingMonths > 1 ? 's' : '');
+            }
+
+            document.getElementById('cc-payoff-time').textContent = payoffTime;
+            document.getElementById('cc-total-interest').textContent = '₹' + totalInterest.toLocaleString('en-IN');
+            document.getElementById('cc-total-payment').textContent = '₹' + totalPayment.toLocaleString('en-IN');
+
+            document.getElementById('cc-result').style.display = 'block';
+        }
+
+        function calculateNPV() {
+            const initialInvestment = parseFloat(document.getElementById('npv-initial').value);
+            const discountRate = parseFloat(document.getElementById('npv-discount').value) / 100;
+            const cashFlowsInput = document.getElementById('npv-cashflows').value;
+
+            if (!initialInvestment || !discountRate || !cashFlowsInput) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const cashFlows = cashFlowsInput.split(',').map(cf => parseFloat(cf.trim()));
+
+            // Calculate NPV
+            let npv = -initialInvestment;
+            let cumulativeCashFlow = 0;
+            let paybackPeriod = 'Not achieved';
+
+            for (let i = 0; i < cashFlows.length; i++) {
+                const presentValue = cashFlows[i] / Math.pow(1 + discountRate, i + 1);
+                npv += presentValue;
+                cumulativeCashFlow += cashFlows[i];
+
+                if (cumulativeCashFlow >= initialInvestment && paybackPeriod === 'Not achieved') {
+                    paybackPeriod = (i + 1) + ' years';
+                }
+            }
+
+            // Simple IRR approximation (would need more complex calculation for exact IRR)
+            const totalCashInflow = cashFlows.reduce((sum, cf) => sum + cf, 0);
+            const averageReturn = (totalCashInflow - initialInvestment) / cashFlows.length;
+            const approximateIRR = (averageReturn / initialInvestment) * 100;
+
+            const profitabilityIndex = (npv + initialInvestment) / initialInvestment;
+
+            document.getElementById('npv-value').textContent = '₹' + npv.toLocaleString('en-IN');
+            document.getElementById('npv-irr').textContent = approximateIRR.toFixed(2) + '%';
+            document.getElementById('npv-payback').textContent = paybackPeriod;
+            document.getElementById('npv-pi').textContent = profitabilityIndex.toFixed(2);
+
+            document.getElementById('npv-result').style.display = 'block';
+        }
+
+        function calculateTaxComparison() {
+            const income = parseFloat(document.getElementById('tax-income').value);
+            const deduction80C = parseFloat(document.getElementById('tax-80c').value) || 0;
+            const otherDeductions = parseFloat(document.getElementById('tax-other').value) || 0;
+            const hraExemption = parseFloat(document.getElementById('tax-hra').value) || 0;
+
+            if (!income) {
+                alert('Please enter annual gross income');
+                return;
+            }
+
+            // Old regime calculation
+            const oldTaxableIncome = Math.max(0, income - deduction80C - otherDeductions - hraExemption - 50000); // 50k standard deduction
+            let oldRegimeTax = 0;
+
+            if (oldTaxableIncome > 250000) {
+                if (oldTaxableIncome <= 500000) {
+                    oldRegimeTax = (oldTaxableIncome - 250000) * 0.05;
+                } else if (oldTaxableIncome <= 1000000) {
+                    oldRegimeTax = 12500 + (oldTaxableIncome - 500000) * 0.20;
+                } else {
+                    oldRegimeTax = 112500 + (oldTaxableIncome - 1000000) * 0.30;
+                }
+            }
+
+            // New regime calculation (FY 2023-24 onwards)
+            let newRegimeTax = 0;
+            if (income > 300000) {
+                if (income <= 600000) {
+                    newRegimeTax = (income - 300000) * 0.05;
+                } else if (income <= 900000) {
+                    newRegimeTax = 15000 + (income - 600000) * 0.10;
+                } else if (income <= 1200000) {
+                    newRegimeTax = 45000 + (income - 900000) * 0.15;
+                } else if (income <= 1500000) {
+                    newRegimeTax = 90000 + (income - 1200000) * 0.20;
+                } else {
+                    newRegimeTax = 150000 + (income - 1500000) * 0.30;
+                }
+            }
+
+            const savings = Math.abs(oldRegimeTax - newRegimeTax);
+            const recommendation = oldRegimeTax < newRegimeTax ? 'Old Regime' : 'New Regime';
+
+            document.getElementById('tax-old-regime').textContent = '₹' + oldRegimeTax.toLocaleString('en-IN');
+            document.getElementById('tax-new-regime').textContent = '₹' + newRegimeTax.toLocaleString('en-IN');
+            document.getElementById('tax-savings').textContent = '₹' + savings.toLocaleString('en-IN');
+            document.getElementById('tax-recommendation').textContent = recommendation;
+
+            document.getElementById('tax-comparison-result').style.display = 'block';
+        }
+
+        function calculatePortfolioDiversification() {
+            const weightsInput = document.getElementById('portfolio-weights').value;
+            const returnsInput = document.getElementById('portfolio-returns').value;
+            const riskInput = document.getElementById('portfolio-risk').value;
+
+            if (!weightsInput || !returnsInput || !riskInput) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const weights = weightsInput.split(',').map(w => parseFloat(w.trim()) / 100);
+            const returns = returnsInput.split(',').map(r => parseFloat(r.trim()) / 100);
+            const risks = riskInput.split(',').map(r => parseFloat(r.trim()) / 100);
+
+            if (weights.length !== returns.length || weights.length !== risks.length) {
+                alert('All input arrays must have the same length');
+                return;
+            }
+
+            // Calculate portfolio return
+            const portfolioReturn = weights.reduce((sum, weight, i) => sum + weight * returns[i], 0);
+
+            // Simplified portfolio risk calculation (assuming zero correlation)
+            const portfolioVariance = weights.reduce((sum, weight, i) => sum + Math.pow(weight * risks[i], 2), 0);
+            const portfolioRisk = Math.sqrt(portfolioVariance);
+
+            // Sharpe ratio (assuming risk-free rate of 6%)
+            const riskFreeRate = 0.06;
+            const sharpeRatio = (portfolioReturn - riskFreeRate) / portfolioRisk;
+
+            // Diversification score based on allocation spread
+            const diversificationScore = 1 - weights.reduce((sum, w) => sum + Math.pow(w, 2), 0);
+
+            document.getElementById('portfolio-return').textContent = (portfolioReturn * 100).toFixed(2) + '%';
+            document.getElementById('portfolio-portfolio-risk').textContent = (portfolioRisk * 100).toFixed(2) + '%';
+            document.getElementById('portfolio-sharpe').textContent = sharpeRatio.toFixed(2);
+            document.getElementById('portfolio-diversification').textContent = (diversificationScore * 100).toFixed(1) + '%';
+
+            document.getElementById('portfolio-result').style.display = 'block';
+        }
+</script>
 </body>
 </html>
