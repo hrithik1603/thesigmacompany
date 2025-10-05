@@ -466,6 +466,165 @@
             line-height: 1.6;
         }
 
+        /* Calculator Styles */
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .calculator-card {
+            background: var(--surface-dark);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .calculator-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .calculator-card h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .calculator-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .calculator-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--surface-dark);
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .calc-input-group {
+            margin-bottom: 20px;
+        }
+
+        .calc-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .calc-input-group input,
+        .calc-input-group select {
+            width: 100%;
+            padding: 12px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .calc-input-group input:focus,
+        .calc-input-group select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .calc-result-box {
+            background: var(--gradient-blue);
+            padding: 24px;
+            border-radius: 12px;
+            margin-top: 24px;
+            text-align: center;
+            color: white;
+        }
+
+        .calc-result-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .calc-result-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .calc-button {
+            background: var(--gradient-blue);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .calc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 115, 232, 0.4);
+        }
+
+        .back-button {
+            background: var(--surface-elevated);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+
+        .back-button:hover {
+            background: var(--hover-bg);
+            border-color: var(--primary-blue);
+        }
+
+        .calc-breakdown {
+            background: var(--surface-elevated);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .calc-breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .calc-breakdown-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
         .news-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -915,6 +1074,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+
             .news-grid {
                 grid-template-columns: 1fr;
             }
@@ -931,6 +1094,10 @@
             .footer-container {
                 grid-template-columns: 1fr;
                 gap: 32px;
+            }
+
+            .calculator-container {
+                padding: 20px;
             }
         }
 
@@ -961,7 +1128,6 @@
 <body>
     <div class="top-bar">
         <div class="top-bar-container">
-            <!-- Theme Toggle on the left -->
             <div class="theme-toggle-container">
                 <span class="theme-toggle-label">Theme:</span>
                 <div class="theme-switch" id="theme-switch" onclick="toggleTheme()">
@@ -971,7 +1137,6 @@
                 </div>
             </div>
             
-            <!-- Contact info on the right -->
             <div class="contact-info">
                 <div class="phone-number">
                     <i class="fas fa-phone"></i>
@@ -996,6 +1161,7 @@
             <ul class="nav-links" id="nav-links">
                 <li><a href="#" class="active" data-page="home" onclick="showPage('home'); closeMobileMenu(); return false;">Home</a></li>
                 <li><a href="#" data-page="about" onclick="showPage('about'); closeMobileMenu(); return false;">About Us</a></li>
+                <li><a href="#" data-page="utilities" onclick="showPage('utilities'); closeMobileMenu(); return false;">Utilities</a></li>
                 <li><a href="#" data-page="news" onclick="showPage('news'); closeMobileMenu(); return false;">News</a></li>
                 <li><a href="#" data-page="services" onclick="showPage('services'); closeMobileMenu(); return false;">Services</a></li>
                 <li><a href="#" data-page="pricing" onclick="showPage('pricing'); closeMobileMenu(); return false;">Pricing</a></li>
@@ -1135,6 +1301,249 @@
             <p>Let's discuss how our CFO services and analytics can accelerate your business growth</p>
             <a href="#" class="cta-white-button" onclick="showPage('contact'); return false;">Schedule a Consultation</a>
         </section>
+    </div>
+
+    <!-- UTILITIES PAGE -->
+    <div id="utilities-page" class="page hidden">
+        <div class="page-content">
+            <div class="page-content-inner">
+                <h1 class="section-title">Financial Utilities</h1>
+                <p class="section-subtitle">Professional financial calculators to help with your planning and analysis</p>
+                
+                <div id="utilities-main" class="calculator-grid">
+                    <div class="calculator-card" onclick="showCalculator('emi')">
+                        <div class="calculator-icon">🏦</div>
+                        <h3>EMI Calculator</h3>
+                        <p>Calculate your monthly loan EMI with detailed breakdown of principal and interest</p>
+                    </div>
+                    
+                    <div class="calculator-card" onclick="showCalculator('sip')">
+                        <div class="calculator-icon">📈</div>
+                        <h3>SIP Returns Calculator</h3>
+                        <p>Calculate SIP returns with XIRR to understand your investment growth over time</p>
+                    </div>
+                    
+                    <div class="calculator-card" onclick="showCalculator('tax')">
+                        <div class="calculator-icon">💰</div>
+                        <h3>Income Tax Calculator</h3>
+                        <p>Calculate income tax based on different income heads and applicable deductions</p>
+                    </div>
+                    
+                    <div class="calculator-card" onclick="showCalculator('irr')">
+                        <div class="calculator-icon">📊</div>
+                        <h3>IRR Calculator</h3>
+                        <p>Calculate Internal Rate of Return for your investments and cash flows</p>
+                    </div>
+                </div>
+
+                <!-- EMI Calculator -->
+                <div id="emi-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">EMI Calculator</h2>
+                        
+                        <div class="calc-input-group">
+                            <label>Loan Amount (₹)</label>
+                            <input type="number" id="emi-principal" placeholder="e.g., 1000000" min="0">
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Interest Rate (% per annum)</label>
+                            <input type="number" id="emi-rate" placeholder="e.g., 8.5" min="0" step="0.1">
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Loan Tenure (Years)</label>
+                            <input type="number" id="emi-tenure" placeholder="e.g., 20" min="1">
+                        </div>
+                        
+                        <button class="calc-button" onclick="calculateEMI()">Calculate EMI</button>
+                        
+                        <div id="emi-result" class="hidden">
+                            <div class="calc-result-box">
+                                <div class="calc-result-label">Monthly EMI</div>
+                                <div class="calc-result-value" id="emi-value">₹0</div>
+                            </div>
+                            
+                            <div class="calc-breakdown">
+                                <div class="calc-breakdown-row">
+                                    <span>Principal Amount</span>
+                                    <span id="emi-principal-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Total Interest</span>
+                                    <span id="emi-interest-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Total Payment</span>
+                                    <span id="emi-total-display">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIP Calculator -->
+                <div id="sip-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">SIP Returns Calculator</h2>
+                        
+                        <div class="calc-input-group">
+                            <label>Monthly Investment (₹)</label>
+                            <input type="number" id="sip-amount" placeholder="e.g., 10000" min="0">
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Expected Annual Return (%)</label>
+                            <input type="number" id="sip-rate" placeholder="e.g., 12" min="0" step="0.1">
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Investment Period (Years)</label>
+                            <input type="number" id="sip-tenure" placeholder="e.g., 10" min="1">
+                        </div>
+                        
+                        <button class="calc-button" onclick="calculateSIP()">Calculate Returns</button>
+                        
+                        <div id="sip-result" class="hidden">
+                            <div class="calc-result-box">
+                                <div class="calc-result-label">Estimated Returns</div>
+                                <div class="calc-result-value" id="sip-value">₹0</div>
+                            </div>
+                            
+                            <div class="calc-breakdown">
+                                <div class="calc-breakdown-row">
+                                    <span>Total Investment</span>
+                                    <span id="sip-invested-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Estimated Gains</span>
+                                    <span id="sip-gains-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Maturity Value</span>
+                                    <span id="sip-maturity-display">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Calculator -->
+                <div id="tax-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">Income Tax Calculator (FY 2024-25)</h2>
+                        
+                        <div class="calc-input-group">
+                            <label>Gross Annual Income (₹)</label>
+                            <input type="number" id="tax-income" placeholder="e.g., 1500000" min="0">
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Tax Regime</label>
+                            <select id="tax-regime">
+                                <option value="new">New Tax Regime (with Standard Deduction)</option>
+                                <option value="old">Old Tax Regime</option>
+                            </select>
+                        </div>
+                        
+                        <div class="calc-input-group" id="tax-deductions-group">
+                            <label>Total Deductions under 80C, 80D, etc. (₹)</label>
+                            <input type="number" id="tax-deductions" placeholder="e.g., 150000" min="0" value="0">
+                        </div>
+                        
+                        <button class="calc-button" onclick="calculateTax()">Calculate Tax</button>
+                        
+                        <div id="tax-result" class="hidden">
+                            <div class="calc-result-box">
+                                <div class="calc-result-label">Total Tax Payable</div>
+                                <div class="calc-result-value" id="tax-value">₹0</div>
+                            </div>
+                            
+                            <div class="calc-breakdown">
+                                <div class="calc-breakdown-row">
+                                    <span>Gross Income</span>
+                                    <span id="tax-gross-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Taxable Income</span>
+                                    <span id="tax-taxable-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Tax + Cess (4%)</span>
+                                    <span id="tax-total-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Net Income (Take Home)</span>
+                                    <span id="tax-net-display">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IRR Calculator -->
+                <div id="irr-calculator" class="hidden">
+                    <button class="back-button" onclick="showUtilitiesMain()">← Back to Utilities</button>
+                    <div class="calculator-container">
+                        <h2 style="text-align: center; margin-bottom: 24px; color: var(--text-primary);">IRR Calculator</h2>
+                        
+                        <div class="calc-input-group">
+                            <label>Initial Investment (₹)</label>
+                            <input type="number" id="irr-investment" placeholder="e.g., 100000" min="0">
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Cash Flow Per Period (₹)</label>
+                            <input type="number" id="irr-cashflow" placeholder="e.g., 2000" min="0">
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Frequency</label>
+                            <select id="irr-frequency">
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                        
+                        <div class="calc-input-group">
+                            <label>Investment Period (Years)</label>
+                            <input type="number" id="irr-tenure" placeholder="e.g., 5" min="1">
+                        </div>
+                        
+                        <button class="calc-button" onclick="calculateIRR()">Calculate IRR</button>
+                        
+                        <div id="irr-result" class="hidden">
+                            <div class="calc-result-box">
+                                <div class="calc-result-label">Internal Rate of Return (IRR)</div>
+                                <div class="calc-result-value" id="irr-value">0%</div>
+                            </div>
+                            
+                            <div class="calc-breakdown">
+                                <div class="calc-breakdown-row">
+                                    <span>Initial Investment</span>
+                                    <span id="irr-investment-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Total Cash Inflows</span>
+                                    <span id="irr-inflow-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Net Gain</span>
+                                    <span id="irr-gain-display">₹0</span>
+                                </div>
+                                <div class="calc-breakdown-row">
+                                    <span>Annualized IRR</span>
+                                    <span id="irr-annual-display">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- ABOUT US PAGE -->
@@ -1411,6 +1820,7 @@
                 <ul>
                     <li><a href="#" onclick="showPage('home'); return false;">Home</a></li>
                     <li><a href="#" onclick="showPage('about'); return false;">About Us</a></li>
+                    <li><a href="#" onclick="showPage('utilities'); return false;">Utilities</a></li>
                     <li><a href="#" onclick="showPage('news'); return false;">News</a></li>
                     <li><a href="#" onclick="showPage('services'); return false;">Services</a></li>
                     <li><a href="#" onclick="showPage('pricing'); return false;">Pricing</a></li>
@@ -1507,7 +1917,6 @@
                     updateLogo('light');
                 }
             } else {
-                // Use system preference
                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     themeIcon.classList.remove('fa-moon');
                     themeIcon.classList.add('fa-sun');
@@ -1529,6 +1938,158 @@
             const navLinks = document.getElementById('nav-links');
             navLinks.classList.remove('active');
         }
+
+        // Calculator Functions
+        function showCalculator(type) {
+            document.getElementById('utilities-main').classList.add('hidden');
+            document.getElementById('emi-calculator').classList.add('hidden');
+            document.getElementById('sip-calculator').classList.add('hidden');
+            document.getElementById('tax-calculator').classList.add('hidden');
+            document.getElementById('irr-calculator').classList.add('hidden');
+            document.getElementById(type + '-calculator').classList.remove('hidden');
+        }
+
+        function showUtilitiesMain() {
+            document.getElementById('utilities-main').classList.remove('hidden');
+            document.getElementById('emi-calculator').classList.add('hidden');
+            document.getElementById('sip-calculator').classList.add('hidden');
+            document.getElementById('tax-calculator').classList.add('hidden');
+            document.getElementById('irr-calculator').classList.add('hidden');
+        }
+
+        function formatCurrency(amount) {
+            return '₹' + amount.toLocaleString('en-IN');
+        }
+
+        // EMI Calculator
+        function calculateEMI() {
+            const principal = parseFloat(document.getElementById('emi-principal').value);
+            const rate = parseFloat(document.getElementById('emi-rate').value) / 12 / 100;
+            const tenure = parseFloat(document.getElementById('emi-tenure').value) * 12;
+
+            if (!principal || !rate || !tenure) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const emi = (principal * rate * Math.pow(1 + rate, tenure)) / (Math.pow(1 + rate, tenure) - 1);
+            const totalPayment = emi * tenure;
+            const totalInterest = totalPayment - principal;
+
+            document.getElementById('emi-value').textContent = formatCurrency(Math.round(emi));
+            document.getElementById('emi-principal-display').textContent = formatCurrency(Math.round(principal));
+            document.getElementById('emi-interest-display').textContent = formatCurrency(Math.round(totalInterest));
+            document.getElementById('emi-total-display').textContent = formatCurrency(Math.round(totalPayment));
+            document.getElementById('emi-result').classList.remove('hidden');
+        }
+
+        // SIP Calculator
+        function calculateSIP() {
+            const monthlyInvestment = parseFloat(document.getElementById('sip-amount').value);
+            const annualRate = parseFloat(document.getElementById('sip-rate').value) / 100;
+            const years = parseFloat(document.getElementById('sip-tenure').value);
+
+            if (!monthlyInvestment || !annualRate || !years) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const monthlyRate = annualRate / 12;
+            const months = years * 12;
+            
+            const maturityValue = monthlyInvestment * (((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate));
+            const totalInvested = monthlyInvestment * months;
+            const gains = maturityValue - totalInvested;
+
+            document.getElementById('sip-value').textContent = formatCurrency(Math.round(maturityValue));
+            document.getElementById('sip-invested-display').textContent = formatCurrency(Math.round(totalInvested));
+            document.getElementById('sip-gains-display').textContent = formatCurrency(Math.round(gains));
+            document.getElementById('sip-maturity-display').textContent = formatCurrency(Math.round(maturityValue));
+            document.getElementById('sip-result').classList.remove('hidden');
+        }
+
+        // Tax Calculator
+        function calculateTax() {
+            const income = parseFloat(document.getElementById('tax-income').value);
+            const regime = document.getElementById('tax-regime').value;
+            const deductions = regime === 'old' ? parseFloat(document.getElementById('tax-deductions').value) || 0 : 0;
+
+            if (!income) {
+                alert('Please enter your income');
+                return;
+            }
+
+            let tax = 0;
+            let standardDeduction = regime === 'new' ? 50000 : 0;
+            let taxableIncome = income - standardDeduction - deductions;
+
+            if (regime === 'new') {
+                if (taxableIncome <= 300000) tax = 0;
+                else if (taxableIncome <= 700000) tax = (taxableIncome - 300000) * 0.05;
+                else if (taxableIncome <= 1000000) tax = 20000 + (taxableIncome - 700000) * 0.10;
+                else if (taxableIncome <= 1200000) tax = 50000 + (taxableIncome - 1000000) * 0.15;
+                else if (taxableIncome <= 1500000) tax = 80000 + (taxableIncome - 1200000) * 0.20;
+                else tax = 140000 + (taxableIncome - 1500000) * 0.30;
+            } else {
+                if (taxableIncome <= 250000) tax = 0;
+                else if (taxableIncome <= 500000) tax = (taxableIncome - 250000) * 0.05;
+                else if (taxableIncome <= 1000000) tax = 12500 + (taxableIncome - 500000) * 0.20;
+                else tax = 112500 + (taxableIncome - 1000000) * 0.30;
+            }
+
+            const cess = tax * 0.04;
+            const totalTax = tax + cess;
+            const netIncome = income - totalTax;
+
+            document.getElementById('tax-value').textContent = formatCurrency(Math.round(totalTax));
+            document.getElementById('tax-gross-display').textContent = formatCurrency(Math.round(income));
+            document.getElementById('tax-taxable-display').textContent = formatCurrency(Math.round(taxableIncome));
+            document.getElementById('tax-total-display').textContent = formatCurrency(Math.round(totalTax));
+            document.getElementById('tax-net-display').textContent = formatCurrency(Math.round(netIncome));
+            document.getElementById('tax-result').classList.remove('hidden');
+        }
+
+        // IRR Calculator
+        function calculateIRR() {
+            const investment = parseFloat(document.getElementById('irr-investment').value);
+            const cashflow = parseFloat(document.getElementById('irr-cashflow').value);
+            const frequency = document.getElementById('irr-frequency').value;
+            const years = parseFloat(document.getElementById('irr-tenure').value);
+
+            if (!investment || !cashflow || !years) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const periods = frequency === 'monthly' ? years * 12 : years;
+            const totalInflow = cashflow * periods;
+            const netGain = totalInflow - investment;
+
+            // Simple IRR approximation
+            const irr = (Math.pow(totalInflow / investment, 1 / years) - 1) * 100;
+
+            document.getElementById('irr-value').textContent = irr.toFixed(2) + '%';
+            document.getElementById('irr-investment-display').textContent = formatCurrency(Math.round(investment));
+            document.getElementById('irr-inflow-display').textContent = formatCurrency(Math.round(totalInflow));
+            document.getElementById('irr-gain-display').textContent = formatCurrency(Math.round(netGain));
+            document.getElementById('irr-annual-display').textContent = irr.toFixed(2) + '%';
+            document.getElementById('irr-result').classList.remove('hidden');
+        }
+
+        // Tax regime change handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const taxRegime = document.getElementById('tax-regime');
+            if (taxRegime) {
+                taxRegime.addEventListener('change', function() {
+                    const deductionsGroup = document.getElementById('tax-deductions-group');
+                    if (this.value === 'old') {
+                        deductionsGroup.style.display = 'block';
+                    } else {
+                        deductionsGroup.style.display = 'none';
+                    }
+                });
+            }
+        });
 
         function loadNewsFromExcel() {
             const newsContainer = document.getElementById('news-container');
@@ -1595,16 +2156,6 @@
                             <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
                             <p><strong>Unable to load news</strong></p>
                             <p style="margin-top: 12px;">Error: ${error.message}</p>
-                            <p style="margin-top: 16px; font-size: 14px; background: var(--surface-elevated); padding: 12px; border-radius: 8px;">
-                                Trying to load from:<br>
-                                <code style="color: var(--primary-blue); word-break: break-all;">${excelUrl}</code>
-                            </p>
-                            <p style="margin-top: 12px; font-size: 14px;">
-                                <strong>Troubleshooting:</strong><br>
-                                1. Ensure financial_news.xlsx is in the main branch<br>
-                                2. File should be in root directory (same as index.html)<br>
-                                3. Check if the repository is public
-                            </p>
                         </div>
                     `;
                 });
@@ -1622,6 +2173,7 @@
             });
             
             if (pageName === 'news') loadNewsFromExcel();
+            if (pageName === 'utilities') showUtilitiesMain();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1658,7 +2210,6 @@
             observer.observe(element);
         });
 
-        // Initialize theme and show home page
         initTheme();
         showPage('home');
     </script>
